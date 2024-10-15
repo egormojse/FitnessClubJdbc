@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container checkout-container">
+    <h1>Оформление заказа</h1>
+    <div class="order-summary">
+        <h2>Ваш заказ:</h2>
+        <th:block th:each="item : ${order.orderItems}">
+            <div class="order-item">
+                <h3 th:text="${item.product.name}">Продукт</h3>
+                <p>Количество: <span th:text="${item.quantity}">0</span></p>
+                <p>Цена за единицу: <span th:text="${item.product.price}">0.00</span> ₽</p>
+                <p>Общая цена: <span th:text="${item.product.price*item.quantity}">0.00</span> ₽</p>
+            </div>
+        </th:block>
+
+        <p>Итоговая сумма: <span th:text="${order.total_price}">0.00</span> ₽</p>
+
+
+    </div>
+
+    <form action="/shop/checkout/submit" method="POST">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+        <input type="hidden" name="userId" th:value="${currentUser.id}">
+        <button type="submit">Оформить заказ</button>
+    </form>
+</div>
+</body>
+</html>

@@ -2,7 +2,7 @@ package ega.spring.fitnessClubJdbc.controllers;
 
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.services.PersonService;
-import ega.spring.fitnessClubJdbc.validation.PersonValidator; // Убедитесь, что у вас есть валидатор
+import ega.spring.fitnessClubJdbc.validation.PersonValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final PersonService personService; // Используем PersonService
+    private final PersonService personService;
     private final PersonValidator personValidator;
 
     @Autowired
@@ -44,10 +44,8 @@ public class AuthController {
             return "auth/registration";
         }
 
-        // Устанавливаем роль по умолчанию при регистрации
         person.setRole("USER");
 
-        // Регистрация пользователя с помощью PersonService
         personService.registerPerson(person);
 
         return "redirect:/auth/login";

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись на тренировку</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="background-image"></div>
+<div class="container">
+    <h2>Запишитесь на тренировку</h2>
+    <form action="/gym/submitWorkout" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-columns-container">
+            <div class="form-group">
+                <label for="trainer">Выберите тренера:</label>
+                <select name="trainerId" id="trainer" required>
+                    <option value="">Выберите тренера:</option>
+                    <th:block th:each="trainer : ${trainers}">
+                        <option th:value="${trainer.id}" th:text="${trainer.name}"></option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="date">Выберите дату:</label>
+                <input type="date" id="date" name="trainingDate" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Выберите время:</label>
+                <select id="time" name="trainingTime" required>
+                    <option value="">Выберите время:</option>
+                    <th:block th:each="time : ${allTimes}">
+                        <th:block th:if="${!occupiedTimes.contains(time)}">
+                            <option th:value="${time}" th:text="${time}"></option>
+                        </th:block>
+                    </th:block>
+                </select>
+            </div>
+
+            <input type="hidden" name="userId" th:value="${currentUser.id}">
+
+            <div class="button-container">
+                <button class="btn-tr" type="submit">Записаться</button>
+            </div>
+
+            <div th:if="${errorMessage}" class="error-message" style="color:red;">
+                <p th:text="${errorMessage}"></p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#trainer, #date').change(function() {
+            const trainerId = $('#trainer').val();
+            const trainingDate = $('#date').val();
+
+            if (trainerId && trainingDate) {
+                $.ajax({
+                    url: '/gym/checkAvailability',
+                    method: 'GET',
+                    data: { trainerId: trainerId, trainingDate: trainingDate },
+                    success: function(response) {
+                        console.log(response);
+                        $('#time').empty().append('<option value="">Выберите время:</option>');
+                        response.availableTimes.forEach(function(time) {
+                            $('#time').append('<option value="' + time + '">' + time + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Ошибка при получении доступного времени');
+                    }
+                });
+            } else {
+                $('#time').empty().append('<option value="">Выберите время:</option>');
+            }
+        });
+    });
+</script>
+</body>
+</html>

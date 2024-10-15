@@ -28,9 +28,10 @@ public class SecurityConfig {
         http
 
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
-                        .requestMatchers("/FitnessClub" ,"/auth/login", "/auth/registration", "/error").permitAll()
-                        .anyRequest().hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/FitnessClub", "/auth/login", "/auth/registration", "/error").permitAll()
+                .requestMatchers("/gym/**", "/spa/**", "/user/**", "/purchase/**", "/shop").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/auth/login")

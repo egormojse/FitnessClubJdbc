@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись на СПА</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="background-image"></div>
+<div class="container">
+    <h2>Запишитесь в СПА</h2>
+    <form action="/spa/submit" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="form-columns-container">
+            <div class="form-group">
+                <label for="procedureType">Выберите тип процедуры:</label>
+                <select id="procedureType" name="procedureType" required>
+                    <option value="">Выберите процедуру:</option>
+                    <option value="massage">Массаж</option>
+                    <option value="cosmetology">Косметология</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="employeeContainer" style="display: none;">
+                <label for="employee">Выберите сотрудника:</label>
+                <select name="employeeId" id="employee" required>
+                    <option value="">Выберите сотрудника:</option>
+                    <th:block th:each="employee : ${employees}">
+                        <option th:value="${employee.id}" th:text="${employee.name}"></option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="form-columns-container">
+                <div class="form-group">
+                    <label for="procedure">Выберите процедуру:</label>
+                    <select name="procedureId" id="procedure" required>
+                        <option value="">Выберите процедуру:</option>
+                        <th:block th:each="procedure : ${procedures}">
+                            <option th:value="${procedure.id}" th:text="${procedure.name}"></option>
+                        </th:block>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                <label for="date">Выберите дату:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="time">Выберите время:</label>
+                <select id="time" name="time" required>
+                    <option value="">Выберите время:</option>
+                    <th:block th:each="time : ${allTimes}">
+                        <th:block th:if="${!occupiedTimes.contains(time)}">
+                            <option th:value="${time}" th:text="${time}"></option>
+                        </th:block>
+                    </th:block>
+                </select>
+            </div>
+
+            <input type="hidden" name="userId" th:value="${currentUser.id}">
+
+            <div class="button-container">
+                <button class="btn-tr" type="submit">Записаться</button>
+            </div>
+
+            <div th:if="${errorMessage}" class="error-message" style="color:red;">
+                <p th:text="${errorMessage}"></p>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#procedureType').change(function() {
+            const procedureType = $(this).val();
+            $('#employeeContainer').show();
+            $('#procedureContainer').show();
+
+            $.ajax({
+                url: '/spa/getEmployeesAndProceduresByType',
+                method: 'GET',
+                data: { type: procedureType === 'massage' ? 'массаж' : 'косметология' },
+                success: function(response) {
+                    $('#employee').empty().append('<option value="">Выберите сотрудника:</option>');
+                    response.employees.forEach(function(employee) {
+                        $('#employee').append('<option value="' + employee.id + '">' + employee.name + '</option>');
+                    });
+
+                    $('#procedure').empty().append('<option value="">Выберите процедуру:</option>');
+                    response.procedures.forEach(function(procedure) {
+                        $('#procedure').append('<option value="' + procedure.id + '">' + procedure.name + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert('Ошибка при получении сотрудников и процедур');
+                }
+            });
+        });
+
+        $('#employee, #date').change(function() {
+            const employeeId = $('#employee').val();
+            const date = $('#date').val();
+
+            if (employeeId && date) {
+                $.ajax({
+                    url: '/spa/checkAvailability',
+                    method: 'GET',
+                    data: { employeeId: employeeId, date: date },
+                    success: function(response) {
+                        $('#time').empty().append('<option value="">Выберите время:</option>');
+                        response.availableTimes.forEach(function(time) {
+                            $('#time').append('<option value="' + time + '">' + time + '</option>');
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        alert('Ошибка при получении доступного времени');
+                    }
+                });
+            } else {
+                $('#time').empty().append('<option value="">Выберите время:</option>');
+            }
+        });
+    });
+</script>
+</body>
+</html>

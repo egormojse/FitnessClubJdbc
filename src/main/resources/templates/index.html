@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,11 +14,11 @@
     <nav class="tabs">
         <div class="tab-button-wrapper">
             <div class="tab-button active" data-target="gym">Фитнес-зал</div>
-            <div class="tab-button" data-target="spa">Спа</div>
-            <div class="tab-button" data-target="profile">Профиль</div>
+            <div class="tab-button " data-target="spa">Спа</div>
+            <a href="/shop" class="tab-button-link">Магазин</a>
+            <a href="user/profile" class="tab-button-link">Профиль</a>
             <a href="auth/login" class="tab-button-link">Вход</a>
             <a href="auth/registration" class="tab-button-link">Регистрация</a>
-
         </div>
     </nav>
 
@@ -28,31 +28,28 @@
             <p>Описание фитнес-зала и услуги, которые мы предоставляем.</p>
             <div class="indicator" data-toggle="gym">▼</div>
             <div class="details hidden">
-                <p>Дополнительная информация о фитнес-зале.</p>
-                <a href="purchase.html" class="btn">Купить абонемент</a>
-                <a href="trainers.html" class="btn">Выбрать тренера</a>
+                <a href="/purchase" class="btn">Купить абонемент</a>
+                <a href="/gym/trainers" class="btn">Наши тренера</a>
+                <a href="/gym/trainer_form" class="btn">Записаться на тренировку</a>
             </div>
         </div>
-
-        <div class="tab-content" id="spa">
+        <div class="tab-content " id="spa">
             <h2>Спа</h2>
-            <p>Описание спа-процедур и доступных услуг.</p>
+            <p>Дополнительная информация о спа-процедурах.</p>
             <div class="indicator" data-toggle="spa">▼</div>
             <div class="details hidden">
-                <p>Дополнительная информация о спа-процедурах.</p>
-                <a href="procedure.html" class="btn">Выбрать процедуру</a>
-                <a href="membership.html" class="btn">Купить абонемент</a>
+                <a href="/purchaseSpa" class="btn">Купить абонемент</a>
+                <a href="/spa/spa-employee" class="btn">Наши специалисты</a>
+                <a href="/spa/spa-booking" class="btn">Выбрать процедуру</a>
             </div>
         </div>
-
         <div class="tab-content" id="profile">
             <h2>Профиль</h2>
             <p>Описание Профиля.</p>
             <div class="indicator" data-toggle="profile">▼</div>
             <div class="details hidden">
-                <p>Дополнительная информация о профиле.</p>
-                <a href="procedure.html" class="btn">Мой профиль</a>
-                <a href="membership.html" class="btn">настройки профиля</a>
+                <a href="/user/profile" class="btn">Мой профиль</a>
+                <a href="/user/profile-settings" class="btn">Настройки профиля</a>
             </div>
         </div>
     </div>

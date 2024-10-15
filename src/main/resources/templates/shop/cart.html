@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="cart-container">
+    <h1>Корзина</h1>
+    <div th:each="item : ${order.orderItems}">
+        <div class="cart-item">
+            <h3 th:text="${item.product.name}">Продукт</h3>
+            <p>Количество: <span th:text="${item.quantity}">0</span></p>
+            <p>Цена за штуку: <span th:text="${item.product.price}">0.00</span> ₽</p>
+            <p>Общая цена: <span th:text="${item.price}">0.00</span> ₽</p>
+            <form action="/shop/cart/remove" method="POST">
+                <input type="hidden" name="productId" th:value="${item.product.id}">
+                <button type="submit">Удалить</button>
+            </form>
+        </div>
+    </div>
+    <div class="cart-summary">
+        <p>Итоговая цена: <span th:text="${order.total_price}">0.00</span> ₽</p>
+        <a href="/shop/checkout" class="btn-checkout">Перейти к оформлению</a>
+    </div>
+</div>
+</body>
+</html>

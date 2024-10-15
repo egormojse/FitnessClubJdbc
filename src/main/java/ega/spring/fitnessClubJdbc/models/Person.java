@@ -1,7 +1,6 @@
 package ega.spring.fitnessClubJdbc.models;
 
 
-import ega.spring.fitnessClubJdbc.enums.membershipType;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +16,7 @@ public class Person {
     private int id;
 
     public Person(int id, String username, String first_name, String last_name,
-                  LocalDate bd_date, String email, String role, String password,
-                  membershipType membershipType) {
+                  LocalDate bd_date, String email, String role, String password) {
         this.id = id;
         this.username = username;
         this.first_name = first_name;
@@ -27,7 +25,6 @@ public class Person {
         this.email = email;
         this.role = role;
         this.password = password;
-        this.membershipType = membershipType;
     }
 
     @NotEmpty(message = "Имя не должно быть пустым")
@@ -42,8 +39,8 @@ public class Person {
     private String last_name;
 
     @NotNull(message = "Введите дату рождения")
-    @DateTimeFormat(pattern = "MM-dd-yyyy")  // Указываем формат даты
-    private LocalDate bd_date;  // Поле остается типа LocalDate
+    @DateTimeFormat(pattern = "MM-dd-yyyy")
+    private LocalDate bd_date;
 
     @AssertTrue(message = "Возраст должен быть больше 12 лет")
     public boolean isAgeValid() {
@@ -60,8 +57,6 @@ public class Person {
 
     @NotNull(message = "Введите пароль")
     private String password;
-
-    private membershipType membershipType;
 
     public Person() {
 

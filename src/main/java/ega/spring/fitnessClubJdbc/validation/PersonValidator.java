@@ -23,7 +23,6 @@ public class PersonValidator implements Validator {
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
 
-        // Пример проверки: проверка, существует ли уже пользователь с таким же именем
         if (personService.getAllPersons().stream()
                 .anyMatch(existingPerson -> existingPerson.getUsername().equals(person.getUsername()))) {
             errors.rejectValue("username", "username.exists", "Имя пользователя уже существует");

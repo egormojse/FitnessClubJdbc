@@ -28,4 +28,15 @@ public class HelloController {
         return "admin";
     }
 
+    @GetMapping("/purchase")
+    public String purchase() {
+        return "purchase";
+    }
+
+    @GetMapping("/purchaseSpa")
+    public String purchaseSpa() {
+        return "purchaseSpa";
+    }
+
+
 }

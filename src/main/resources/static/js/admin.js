@@ -1,8 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.querySelector('.sidebar');
-    const toggleButton = document.querySelector('.toggle-sidebar');
-
-    toggleButton.addEventListener('click', () => {
-        sidebar.classList.toggle('hidden');
-    });
-});
+function showSection(sectionId) {
+    let sections = document.querySelectorAll('.section');
+    sections.forEach(section => section.style.display = 'none');
+    document.getElementById(sectionId).style.display = 'block';
+}

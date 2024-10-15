@@ -4,3 +4,4 @@ spring.datasource.username=
 spring.datasource.password=
 spring.datasource.driver-class-name=
 
+employee.default.password=

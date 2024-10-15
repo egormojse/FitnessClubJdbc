@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль Пользователя</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="admin-container">
+    <div class="profile-header">
+        <h1 class="profile-title">Профиль Пользователя</h1>
+    </div>
+
+    <div class="profile-info">
+
+        <div class="profile-details">
+            <p><strong>Имя пользователя:</strong> <span th:text="${profile.username}"></span></p>
+            <p><strong>Email:</strong> <span th:text="${profile.email}"></span></p>
+        </div>
+    </div>
+
+    <div class="profile-actions">
+        <a href="profile-settings.html" class="admin-btn">Настройки Профиля</a>
+    </div>
+
+    <!-- Список тренировок -->
+    <div class="training-records">
+        <h2>Записи на тренировки и процедуры</h2>
+        <ul>
+            <li th:each="training : ${profile.trainings}">
+                <span th:text="${training.type}"></span> -
+                <span th:text="${training.dateTime}"></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Список заказов -->
+    <div class="orders">
+        <h2>Заказы</h2>
+        <ul>
+            <li th:each="order : ${profile.orders}">
+                Заказ #<span th:text="${order.id}"></span>:
+                <span th:text="${order.product}"></span> -
+                <span th:text="${order.orderDate}"></span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Информация об абонементе -->
+    <div class="membership-info">
+        <h2>Абонемент</h2>
+        <p>Тип: <span th:text="${profile.membership.type}"></span></p>
+        <p>Статус: <span th:text="${profile.membership.status}"></span></p>
+    </div>
+</div>
+</body>
+</html>
