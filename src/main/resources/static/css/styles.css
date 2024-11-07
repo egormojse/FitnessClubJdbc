@@ -1,7 +1,7 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
+    background-color: #1a1a1a; /* Dark background */
+    color: #ffffff; /* White text */
     margin: 0;
     padding: 0;
 }
@@ -9,14 +9,14 @@ body {
 .container {
     max-width: 800px;
     margin: 20px auto;
-    background-color: white;
+    background-color: #333333; /* Dark gray background for container */
     padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 0, 51, 0.3); /* Neon red shadow */
     border-radius: 8px;
 }
 
 h1, h2, h3 {
-    color: #003366;
+    color: #ff0033; /* Neon red for headings */
     margin-bottom: 15px;
 }
 
@@ -24,7 +24,7 @@ h1, h2, h3 {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #3366cc;
+    background-color: #ff0033; /* Neon red */
     color: white;
     text-align: center;
     border: none;
@@ -35,7 +35,7 @@ h1, h2, h3 {
 }
 
 .btn:hover {
-    background-color: #003366;
+    background-color: #ff3366; /* Brighter neon red on hover */
 }
 
 .form-group {
@@ -46,8 +46,10 @@ h1, h2, h3 {
     width: 100%;
     padding: 10px;
     margin: 5px 0 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #ff0033; /* Neon red border */
     border-radius: 5px;
+    background-color: #333333; /* Dark background for input */
+    color: white; /* White text in input */
 }
 
 .hidden {

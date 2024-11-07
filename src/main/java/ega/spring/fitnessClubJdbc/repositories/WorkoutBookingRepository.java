@@ -1,8 +1,11 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
 import ega.spring.fitnessClubJdbc.models.GymBooking;
-import ega.spring.fitnessClubJdbc.rowmappers.GymBookingRowMapper;
+import ega.spring.fitnessClubJdbc.models.Person;
+import ega.spring.fitnessClubJdbc.models.Trainer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -10,34 +13,49 @@ import java.util.List;
 
 @Repository
 public class WorkoutBookingRepository {
-
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public WorkoutBookingRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-
-    public void save(GymBooking booking) {
-        String sql = "INSERT INTO workout_booking (trainer_id, user_id, date, status) VALUES (?, ?, ?, ?)";
-        jdbcTemplate.update(sql, booking.getTrainer().getId(), booking.getUser().getId(), booking.getDate(), booking.getStatus());
-    }
-
     public List<GymBooking> findByTrainerIdAndDate(int trainerId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         String sql = "SELECT * FROM workout_booking WHERE trainer_id = ? AND date BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, new GymBookingRowMapper(), trainerId, startOfDay, endOfDay);
+        return jdbcTemplate.query(sql, new Object[]{trainerId, startOfDay, endOfDay}, gymBookingRowMapper());
     }
 
-    public boolean isTimeOccupied(int trainerId, LocalDateTime dateTime) {
-        String sql = "SELECT COUNT(*) FROM workout_booking WHERE trainer_id = ? AND date = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, trainerId, dateTime);
-        return count != null && count > 0;
+    public List<GymBooking> findByTrainerIdAndDate(int trainerId, LocalDateTime date) {
+        String sql = "SELECT * FROM workout_booking WHERE trainer_id = ? AND date = ?";
+        return jdbcTemplate.query(sql, new Object[]{trainerId, date}, gymBookingRowMapper());
     }
 
-    public List<LocalDateTime> getOccupiedTimes(int trainerId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        String sql = "SELECT date FROM workout_booking WHERE trainer_id = ? AND date BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getTimestamp("date").toLocalDateTime(), trainerId, startOfDay, endOfDay);
+    public List<GymBooking> findByUserId(int userId) {
+        String sql = "SELECT * FROM workout_booking WHERE user_id = ?";
+        return jdbcTemplate.query(sql, new Object[]{userId}, gymBookingRowMapper());
     }
 
+    public GymBooking findById(int id) {
+        String sql = "SELECT * FROM workout_booking WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, gymBookingRowMapper());
+    }
 
+    public List<GymBooking> findAllByDeletedFalse() {
+        String sql = "SELECT * FROM workout_booking WHERE deleted = false";
+        return jdbcTemplate.query(sql, gymBookingRowMapper());
+    }
+
+    private RowMapper<GymBooking> gymBookingRowMapper() {
+        return (rs, rowNum) -> {
+            GymBooking booking = new GymBooking();
+            booking.setId(rs.getInt("id"));
+            booking.setDate(rs.getObject("date", LocalDateTime.class));
+            booking.setUser(new Person());
+            booking.getUser().setId(rs.getInt("user_id"));
+            booking.setTrainer(new Trainer());
+            booking.getTrainer().setId(rs.getInt("trainer_id"));
+            booking.setDeleted(rs.getBoolean("deleted"));
+            return booking;
+        };
+    }
 }

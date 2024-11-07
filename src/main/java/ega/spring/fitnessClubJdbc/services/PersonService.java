@@ -7,7 +7,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PersonService {
@@ -29,7 +28,7 @@ public class PersonService {
     }
 
     public List<Person> getAllPersons() {
-        return personRepository.findAll();
+        return personRepository.findAllByDeletedFalse();
     }
 }
 

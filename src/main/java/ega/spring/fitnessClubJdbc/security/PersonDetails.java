@@ -53,4 +53,7 @@ public class PersonDetails implements UserDetails {
         return true;
     }
 
+    public int getUserId() {
+        return person.getId();
+    }
 }

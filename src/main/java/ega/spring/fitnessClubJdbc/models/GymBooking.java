@@ -19,5 +19,7 @@ public class GymBooking {
 
     private String status;
 
+    private boolean deleted;
+
     public GymBooking() {}
 }

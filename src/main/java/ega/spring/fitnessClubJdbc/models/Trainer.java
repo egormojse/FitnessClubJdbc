@@ -32,6 +32,8 @@ public class Trainer {
 
     private String role;
 
+    private boolean deleted;
+
     public Trainer() {
 
     }

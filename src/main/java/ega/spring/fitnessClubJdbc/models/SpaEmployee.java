@@ -32,4 +32,6 @@ public class SpaEmployee {
 
     private String role;
 
+    private boolean deleted;
+
 }

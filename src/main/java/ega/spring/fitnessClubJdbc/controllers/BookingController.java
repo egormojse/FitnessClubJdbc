@@ -2,7 +2,9 @@ package ega.spring.fitnessClubJdbc.controllers;
 
 import ega.spring.fitnessClubJdbc.models.GymBooking;
 import ega.spring.fitnessClubJdbc.models.Person;
+import ega.spring.fitnessClubJdbc.models.PersonMembership;
 import ega.spring.fitnessClubJdbc.models.Trainer;
+import ega.spring.fitnessClubJdbc.repositories.PersonMembershipRepository;
 import ega.spring.fitnessClubJdbc.security.PersonDetails;
 import ega.spring.fitnessClubJdbc.services.BookingService;
 import ega.spring.fitnessClubJdbc.services.PersonDetailsService;
@@ -29,12 +31,14 @@ public class BookingController {
     private final TrainerService trainerService;
     private final BookingService workoutBookingService;
     private final PersonDetailsService personDetailsService;
+    private final PersonMembershipRepository personMembershipRepository;
 
 
-    public BookingController(TrainerService trainerService, BookingService workoutBookingService, PersonDetailsService personDetailsService) {
+    public BookingController(TrainerService trainerService, BookingService workoutBookingService, PersonDetailsService personDetailsService, PersonMembershipRepository personMembershipRepository) {
         this.trainerService = trainerService;
         this.workoutBookingService = workoutBookingService;
         this.personDetailsService = personDetailsService;
+        this.personMembershipRepository = personMembershipRepository;
     }
 
     @GetMapping("/trainer_form")
@@ -71,12 +75,12 @@ public class BookingController {
     }
 
     @PostMapping("/submitWorkout")
-    public String submitWorkout(@RequestParam int trainerId,
-                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate trainingDate,
-                                @RequestParam String trainingTime,
-                                @RequestParam int userId,
-                                Principal principal,
-                                Model model) {
+    public String submitWorkoutBooking(@RequestParam int trainerId,
+                                       @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate trainingDate,
+                                       @RequestParam String trainingTime,
+                                       @RequestParam int userId,
+                                       Principal principal,
+                                       Model model) {
         if (workoutBookingService.isTimeOccupied(trainerId, trainingDate, trainingTime)) {
             model.addAttribute("errorMessage", "Выбранное время занято. Пожалуйста, выберите другое время.");
             return showTrainerForm(model, principal);
@@ -85,6 +89,16 @@ public class BookingController {
         LocalDateTime trainingDateTime = LocalDateTime.of(trainingDate, LocalTime.parse(trainingTime));
         Trainer trainer = trainerService.getTrainerById(trainerId);
         Person user = personDetailsService.getUserById(userId);
+
+        PersonMembership currentMembership = personMembershipRepository.findActiveMembershipByPersonId(user.getId());
+        if (currentMembership != null && currentMembership.getRemainingSpaVisits() > 0) {
+            currentMembership.setRemainingSpaVisits(currentMembership.getRemainingSpaVisits() - 1);
+            personMembershipRepository.updateRemainingSpaVisits(currentMembership.getId(), currentMembership.getRemainingSpaVisits());
+        }
+        else {
+            model.addAttribute("errorMessage", "У вас недостаточно оставшихся посещений.");
+            return showTrainerForm(model, principal);
+        }
 
         GymBooking booking = new GymBooking();
         booking.setTrainer(trainer);
@@ -95,6 +109,5 @@ public class BookingController {
         workoutBookingService.save(booking);
         return "index";
     }
-
 
 }

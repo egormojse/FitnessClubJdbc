@@ -2,37 +2,59 @@ body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #000000; /* Черный фон */
+    color: #fff; /* Белый текст */
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100vh;
-    overflow-x: hidden;
+    overflow: visible;
+}
+
+.form-group {
+    text-align: center; /* Центрирование содержимого внутри блока */
+}
+
+.tab-content {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+    background-color: #1c1c1c; /* Темный фон */
+}
+
+.card {
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #111; /* Темный фон карточек */
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+}
+
+.edit-form, .delete-form {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #333; /* Темный фон для форм */
+    border: 1px solid #444;
+    border-radius: 5px;
 }
 
 .container {
     width: 100%;
-    max-width: 800px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-    position: relative;
-    text-align: center;
-    margin-top: 20px;
-    box-sizing: border-box;
-}
-
-.container-tr {
-    overflow-y: hidden;
-    width: 100%;
     max-width: 1100px;
     padding: 20px;
-    background-color: rgba(255, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.7); /* Черный с прозрачностью */
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     z-index: 1;
     position: relative;
     text-align: center;
@@ -47,49 +69,47 @@ select, input[type="datetime-local"] {
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
+    background-color: #222; /* Темный фон для инпутов */
+    color: #fff; /* Белый текст */
 }
 
 h2 {
     margin-top: 10px;
     text-align: center;
-    color: #3f51b5;
+    color: #ff073a; /* Неоново-красный */
     margin-bottom: 30px;
     font-size: 2em;
 }
+.btn-m {
+    width: 80%;
+    align-self: center;
+    display: inline-block;
+    margin: 0 auto;
+    border-radius: 10px;
+}
 
-.btn, button {
-    width: 100%;
-    padding: 12px;
-    background-color: #28a745;
+.btn, button {width: 100%;}
+
+
+.btn, .btn-m, button {
+    border-radius: 10px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    background-color: #ff073a; /* Неоново-красная кнопка */
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
     margin-top: 20px;
     display: block;
     align-self: center;
-}
-.btn-tr{
-    display: block;
-    width: 80%;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    text-align: center;
-    border: none;
-    border-radius: 5px;
     text-decoration: none;
-    margin-top: 10px;
-    align-self: center;
-}
-.btn-tr:hover{
-    background-color: #0056b3;
+    text-align: center;
 }
 
 .btn:hover, button:hover {
-    background-color: #218838;
+    background-color: #d10428; /* Светло-неоново-красный при наведении */
 }
 
 .button-container {
@@ -99,6 +119,7 @@ h2 {
 }
 
 .form-wrapper, .form-group {
+    text-align: center;
     width: 100%;
     margin-bottom: 15px;
 }
@@ -106,7 +127,7 @@ h2 {
 label {
     display: block;
     margin-bottom: 5px;
-    color: #666;
+    color: #fff; /* Белый текст для лейблов */
     text-align: center;
 }
 
@@ -117,6 +138,24 @@ input[type="text"], input[type="email"], input[type="password"] {
     border-radius: 4px;
     font-size: 1rem;
     margin-bottom: 10px;
+    background-color: #222; /* Темный фон для инпутов */
+    color: #fff;
+    text-align: center;
+}
+
+input::placeholder {
+    color: #999; /* Серый текст для подсказок */
+    text-align: center; /* Центровка текста placeholder */
+}
+
+.container.auth {
+    width: 100%;
+    max-width: 400px; /* Ограниченная ширина контейнера */
+    background-color: rgba(0, 0, 0, 0.8); /* Прозрачный черный фон */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
 }
 
 .error-message {
@@ -155,19 +194,19 @@ input[type="text"], input[type="email"], input[type="password"] {
     padding: 10px 20px;
     cursor: pointer;
     font-size: 1.1rem;
-    color: #3f51b5;
+    color: #ff073a; /* Неоново-красный */
     text-decoration: none;
     transition: color 0.3s ease, background-color 0.3s ease;
 }
 
 .tab-button-link:hover, .tab-button:hover {
-    color: #303f9f;
+    color: #d10428; /* Светлый неоново-красный при наведении */
 }
 
 .tab-button.active, .tab-button-link.active {
-    color: #0d47a1;
+    color: #ff073a; /* Неоново-красный */
     font-weight: bold;
-    border-bottom: 2px solid #0d47a1;
+    border-bottom: 2px solid #ff073a; /* Неоново-красная линия */
 }
 
 .tab-content-wrapper {
@@ -180,8 +219,8 @@ input[type="text"], input[type="email"], input[type="password"] {
     width: 100%;
     max-width: 300px;
     padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: #333; /* Темный фон */
+    border: 1px solid #444;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -203,31 +242,30 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 
 .m-card {
+    width: 260px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     text-align: center;
     border-radius: 10px;
-    background-color: #ffffff;
+    background-color: #111; /* Темный фон */
     opacity: 1;
-    flex: 0 1 200px;
+    flex: 0 1 200px; /* Меньше ширина */
     margin: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     padding: 10px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
 }
 
-
-
 .m-card h3 {
-    color: #3f51b5;
+    color: #ff073a; /* Неоново-красный заголовок */
     margin-bottom: 10px;
 }
 
 .m-card p {
     font-size: 1.2rem;
-    color: #333;
+    color: #fff; /* Белый текст */
 }
 
 .m-card ul {
@@ -242,8 +280,10 @@ input[type="text"], input[type="email"], input[type="password"] {
 
 .details {
     margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
     padding: 10px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #444;
     transition: max-height 0.3s ease, opacity 0.3s ease;
     max-height: 0;
     opacity: 0;
@@ -264,11 +304,11 @@ input[type="text"], input[type="email"], input[type="password"] {
     cursor: pointer;
     margin-top: 10px;
     transition: transform 0.3s ease;
-    color: #3f51b5;
+    color: #ff073a; /* Неоново-красный */
 }
 
 .indicator:hover {
-    color: #303f9f;
+    color: #d10428; /* Светло-неоново-красный при наведении */
 }
 
 .indicator.active {
@@ -277,7 +317,7 @@ input[type="text"], input[type="email"], input[type="password"] {
 
 .trainer-photo {
     width: 100%;
-    height: 250px;
+    height: 200px; /* Меньше фото */
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -291,47 +331,195 @@ input[type="date"] {
     border-radius: 4px;
     font-size: 1rem;
     appearance: none;
-    background-color: #ffffff;
-    color: #333;
-}
-.strikethrough {
-    text-decoration: line-through;
-    color: red;
+    background-color: #222; /* Темный фон для инпутов */
+    color: #fff; /* Белый текст */
 }
 
-
-input[type="date"]:focus {
-    outline: none;
-    border-color: #3f51b5;
+input[type="date"]:focus, input[type="datetime-local"]:focus {
+    border: 1px solid #ff073a; /* Неоново-красная рамка при фокусе */
 }
 
+input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+    border: 1px solid #ff073a; /* Неоново-красная рамка при фокусе */
+}
+.container-tr{
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон для видимого эффекта */
+    backdrop-filter: blur(10px); /* Применяет размытие к фону позади элемента */
+    -webkit-backdrop-filter: blur(10px); /* Для поддержки в WebKit-браузерах */
+    padding: 20px;
+    border-radius: 10px; /* Для закругления углов */
+    color: #fff;
+}
+
+.cart-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.cart-items {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #333;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #2a2a2a;
+}
+
+.cart-item {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #ff4c4c;
+}
+
+.cart-item p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
 
 form button {
-    width: 100%;
-    margin-bottom: 10px;
+    background-color: #ff4c4c;
+    border-radius: 10px;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
+form button:hover {
+    background-color: #d73737;
+}
 
-.checkout-link {
-    display: block;
+/* Секция итоговой суммы */
+.cart-summary {
     text-align: center;
     padding: 10px;
-    background-color: #007bff;
-    color: white;
+    background-color: #2a2a2a;
     border-radius: 5px;
+}
+
+.cart-summary p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+.btn-checkout {
+    display: inline-block;
+    background-color: #ff4c4c;
+    color: #fff;
+    padding: 10px 20px;
     text-decoration: none;
+    border-radius: 10px;
     transition: background-color 0.3s ease;
-    width: 100%;
-}
-
-.checkout-link:hover {
-    background-color: #0056b3;
 }
 
 
-h1 {
-    font-size: 2rem;
+/* Скроллбар */
+.cart-items::-webkit-scrollbar {
+    width: 10px;
+}
+
+.cart-items::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.cart-items::-webkit-scrollbar-thumb:hover {
+    background-color: #777;
+}
+
+
+.checkout-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Сводка заказа */
+.order-summary {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #333;
+    padding: 10px;
     margin-bottom: 20px;
+    border-radius: 5px;
+    background-color: #2a2a2a;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    color: #f0f0f0;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #444;
     text-align: center;
 }
 
+th {
+    background-color: #ff4c4c;
+    color: #fff;
+}
+
+tr:nth-child(even) {
+    background-color: #2a2a2a;
+}
+
+tr:nth-child(odd) {
+    background-color: #1f1f1f;
+}
+
+
+/* Кнопка оформления заказа */
+form button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background-color: #ff4c4c;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #d73737;
+}
+
+/* Скроллбар */
+.order-summary::-webkit-scrollbar {
+    width: 10px;
+}
+
+.order-summary::-webkit-scrollbar-thumb {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+.order-summary::-webkit-scrollbar-thumb:hover {
+    background-color: #777;
+}

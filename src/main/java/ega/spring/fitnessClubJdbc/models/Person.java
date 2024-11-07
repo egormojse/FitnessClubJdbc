@@ -58,6 +58,8 @@ public class Person {
     @NotNull(message = "Введите пароль")
     private String password;
 
+    private boolean deleted;
+
     public Person() {
 
     }

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="stylesheet" href="/css/profile.css">
+    <script defer src="/js/admin.js"></script>
+</head>
+<body>
+<div class="background-image"></div>
+<div class="container">
+    <nav class="tabs">
+        <div class="tab-button-wrapper">
+            <div class="tab-button active" data-target="settings">Настройки профиля</div>
+            <div class="tab-button" data-target="workouts">Записи на тренировки</div>
+            <div class="tab-button" data-target="spa">Записи на спа</div>
+            <div class="tab-button" data-target="orders">Заказы</div>
+            <a href="/shop" class="tab-button-link">Магазин</a>
+        </div>
+    </nav>
+
+    <div class="tab-content-wrapper">
+        <div class="tab-content active" id="settings">
+            <h2>Настройки профиля</h2>
+            <form action="/update-profile" method="post" class="profile-form">
+                <label for="name">Имя:</label>
+                <input type="text" id="name" name="name" th:value="${user.getFirst_name()}" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" th:value="${user.getEmail()}" required>
+                <button type="submit">Обновить</button>
+            </form>
+        </div>
+
+        <div class="tab-content" id="workouts">
+            <h2>Записи на тренировки</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Тренер</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="workout : ${workouts}">
+                    <td th:text="${#temporals.format(workout.getDate(), 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#temporals.format(workout.getDate(), 'HH:mm')}"></td>
+                    <td th:text="${workout.getTrainer().getName()}"></td>
+                    <td th:text="${workout.getStatus()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-content" id="spa">
+            <h2>Записи на спа</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Специалист</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="spaBooking : ${spaBookings}">
+                    <td th:text="${#temporals.format(spaBooking.getDate(), 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#temporals.format(spaBooking.getDate(), 'HH:mm')}"></td>
+                    <td th:text="${spaBooking.getEmployeeName()}"></td>
+                    <td th:text="${spaBooking.getStatus()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="tab-content" id="orders">
+            <h2>Заказы</h2>
+            <table>
+                <thead>
+                <tr>
+                    <th>Номер заказа</th>
+                    <th>Дата</th>
+                    <th>Время</th>
+                    <th>Сумма</th>
+                    <th>Статус</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="order : ${orders}">
+                    <td th:text="${order.getId()}"></td>
+                    <td th:text="${#dates.format(order.getDate(), 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#dates.format(order.getDate(), 'HH:mm')}"></td>
+                    <td th:text="${order.getTotal_price()}"></td>
+                    <td th:text="${order.getStatus()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>

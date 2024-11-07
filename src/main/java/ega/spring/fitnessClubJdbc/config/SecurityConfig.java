@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/FitnessClub", "/auth/login", "/auth/registration", "/error").permitAll()
-                .requestMatchers("/gym/**", "/spa/**", "/user/**", "/purchase/**", "/shop").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/gym/**", "/spa/**", "/user/**", "/purchase/**", "/shop").authenticated()
                 .anyRequest().authenticated()
                 )
                 .formLogin(login -> login

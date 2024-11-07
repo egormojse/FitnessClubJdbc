@@ -21,9 +21,17 @@ public class Order {
 
     private String status = "Обрабатывается";
 
+    private boolean deleted;
+
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public Order() {}
+
+    public void updateTotalPrice() {
+        this.total_price = orderItems.stream()
+                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
+                .sum();
+    }
 
 
 }

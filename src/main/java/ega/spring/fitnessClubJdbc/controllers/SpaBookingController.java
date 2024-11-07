@@ -1,14 +1,9 @@
 package ega.spring.fitnessClubJdbc.controllers;
 
-import ega.spring.fitnessClubJdbc.models.Person;
-import ega.spring.fitnessClubJdbc.models.SpaBooking;
-import ega.spring.fitnessClubJdbc.models.SpaEmployee;
-import ega.spring.fitnessClubJdbc.models.SpaProcedure;
+import ega.spring.fitnessClubJdbc.models.*;
+import ega.spring.fitnessClubJdbc.repositories.PersonMembershipRepository;
 import ega.spring.fitnessClubJdbc.security.PersonDetails;
-import ega.spring.fitnessClubJdbc.services.PersonDetailsService;
-import ega.spring.fitnessClubJdbc.services.SpaBookingService;
-import ega.spring.fitnessClubJdbc.services.SpaEmployeeService;
-import ega.spring.fitnessClubJdbc.services.SpaProcedureService;
+import ega.spring.fitnessClubJdbc.services.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -33,13 +28,15 @@ public class SpaBookingController {
     private final SpaBookingService spaBookingService;
     private final PersonDetailsService personDetailsService;
     private final SpaProcedureService spaProcedureService;
+    private final PersonMembershipRepository personMembershipRepository;
 
     public SpaBookingController(SpaEmployeeService spaEmployeeService, SpaBookingService spaBookingService,
-                                PersonDetailsService personDetailsService, SpaProcedureService spaProcedureService) {
+                                PersonDetailsService personDetailsService, SpaProcedureService spaProcedureService, PersonMembershipRepository personMembershipRepository) {
         this.spaEmployeeService = spaEmployeeService;
         this.spaBookingService = spaBookingService;
         this.personDetailsService = personDetailsService;
         this.spaProcedureService = spaProcedureService;
+        this.personMembershipRepository = personMembershipRepository;
     }
 
     @GetMapping("/spa-booking")
@@ -91,33 +88,39 @@ public class SpaBookingController {
     }
 
     @PostMapping("/submit")
-    public String submitWorkout(@RequestParam int employeeId,
-                                @RequestParam int procedureId,
-                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-                                @RequestParam String time,
-                                @RequestParam int userId,
-                                Principal principal,
-                                Model model) {
+    public String submitSpaBooking(@RequestParam int employeeId,
+                                   @RequestParam int procedureId,
+                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                   @RequestParam String time,
+                                   @RequestParam int userId,
+                                   Principal principal,
+                                   Model model) {
         if (spaBookingService.isTimeOccupied(employeeId, date, time)) {
             model.addAttribute("errorMessage", "Выбранное время занято. Пожалуйста, выберите другое время.");
             return showSpaForm(model, principal);
         }
 
-        LocalDateTime trainingDateTime = LocalDateTime.of(date, LocalTime.parse(time));
-
-        Optional<SpaEmployee> employee = spaEmployeeService.getEmployeeById(employeeId);
+        LocalDateTime spaDateTime = LocalDateTime.of(date, LocalTime.parse(time));
+        SpaEmployee employee = spaEmployeeService.getEmployeeById(employeeId);
         Person user = personDetailsService.getUserById(userId);
-
         SpaProcedure procedure = spaProcedureService.getProcedureById(procedureId);
+
+        PersonMembership currentMembership = personMembershipRepository.findActiveMembershipByPersonId(user.getId());
+        if (currentMembership != null && currentMembership.getRemainingSpaVisits() > 0) {
+            currentMembership.setRemainingSpaVisits(currentMembership.getRemainingSpaVisits() - 1);
+            personMembershipRepository.updateRemainingSpaVisits(currentMembership.getId(), currentMembership.getRemainingSpaVisits());
+        } else {
+            model.addAttribute("errorMessage", "У вас недостаточно оставшихся спа-посещений.");
+            return showSpaForm(model, principal);
+        }
 
         SpaBooking booking = new SpaBooking();
         booking.setEmployeeId(employeeId);
         booking.setUser(user);
         booking.setProcedure(procedure);
-        booking.setDate(trainingDateTime);
+        booking.setDate(spaDateTime);
         booking.setStatus("Зарегистрирован(а)");
 
-        // Save the booking
         spaBookingService.save(booking);
         return "index";
     }

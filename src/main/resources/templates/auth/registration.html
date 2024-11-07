@@ -6,10 +6,10 @@
     <title>Registration</title>
     <link rel="stylesheet" href="/css/style.css" type="text/css"/>
     <script src="/js/script.js"></script>
-
 </head>
 <body>
-<div class="container registration">
+<div class="background-image"></div>
+<div class="container auth">
     <div class="form-wrapper">
         <h2>Регистрация</h2>
         <form th:method="POST" th:action="@{/auth/registration}" th:object="${person}" class="form">
@@ -55,6 +55,5 @@
         </form>
     </div>
 </div>
-
 </body>
 </html>

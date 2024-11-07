@@ -5,6 +5,7 @@ import ega.spring.fitnessClubJdbc.models.Trainer;
 import ega.spring.fitnessClubJdbc.repositories.SpaEmployeeRepository;
 import ega.spring.fitnessClubJdbc.repositories.TrainerRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -13,13 +14,12 @@ import org.springframework.stereotype.Service;
 public class AdminService {
 
     private final PasswordEncoder passwordEncoder;
-    private final TrainerRepository trainerRepository;
-    private final SpaEmployeeRepository spaEmployeeRepository;
+    private final JdbcTemplate jdbcTemplate;
 
-    public AdminService(PasswordEncoder passwordEncoder, TrainerRepository trainerRepository, SpaEmployeeRepository spaEmployeeRepository) {
+
+    public AdminService(PasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate) {
         this.passwordEncoder = passwordEncoder;
-        this.trainerRepository = trainerRepository;
-        this.spaEmployeeRepository = spaEmployeeRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -30,15 +30,18 @@ public class AdminService {
     @Value("${employee.default.password}")
     private String password;
 
+
     public void register(Trainer trainer) {
-        trainer.setPassword(passwordEncoder.encode(password));
-        trainer.setRole("TRAINER");
-        trainerRepository.save(trainer);
+        String encodedPassword = passwordEncoder.encode(password);
+        String sql = "INSERT INTO trainers (name, email, password, role) VALUES (?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql, trainer.getName(), trainer.getEmail(), encodedPassword, "TRAINER");
     }
 
     public void register(SpaEmployee spaEmployee) {
-        spaEmployee.setPassword(passwordEncoder.encode(password));
-        spaEmployee.setRole("SPA");
-        spaEmployeeRepository.save(spaEmployee);
+        String encodedPassword = passwordEncoder.encode(password);
+        String sql = "INSERT INTO spa_employees (name, email, password, role) VALUES (?, ?, ?, ?)";
+
+        jdbcTemplate.update(sql, spaEmployee.getName(), spaEmployee.getEmail(), encodedPassword, "SPA");
     }
 }

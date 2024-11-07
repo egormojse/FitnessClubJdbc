@@ -64,14 +64,15 @@
 
             <input type="hidden" name="userId" th:value="${currentUser.id}">
 
-            <div class="button-container">
-                <button class="btn-tr" type="submit">Записаться</button>
+            <div class="form-group">
+                <button class="btn-m" type="submit">Записаться</button>
             </div>
 
             <div th:if="${errorMessage}" class="error-message" style="color:red;">
                 <p th:text="${errorMessage}"></p>
             </div>
         </div>
+            </div>
     </form>
 </div>
 <script>

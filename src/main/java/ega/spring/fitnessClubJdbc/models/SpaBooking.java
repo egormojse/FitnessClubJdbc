@@ -17,9 +17,13 @@ public class SpaBooking {
 
     private int employeeId;
 
+    private String employeeName;
+
     private LocalDateTime date;
 
     private String status;
+
+    private boolean deleted;
 
     public SpaBooking() {}
 

@@ -1,10 +1,12 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
 import ega.spring.fitnessClubJdbc.models.Person;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
 import ega.spring.fitnessClubJdbc.rowmappers.PersonRowMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -18,39 +20,50 @@ public class PersonRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void save(Person person) {
-        String sql = "INSERT INTO person (username, first_name, last_name, bd_date, email, role, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getLast_name(), person.getBd_date(),
-                person.getEmail(), person.getRole(), person.getPassword());
-    }
-
-    public List<Person> findAll() {
-        String sql = "SELECT * FROM person";
-        return jdbcTemplate.query(sql, new PersonRowMapper());
-    }
-
-
-    public Person findById(int id) {
-        String sql = "SELECT * FROM person WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new PersonRowMapper(), id);
-    }
-
     public Person findByUsername(String username) {
         String sql = "SELECT * FROM person WHERE username = ?";
         List<Person> persons = jdbcTemplate.query(sql, new PersonRowMapper(), username);
         return persons.isEmpty() ? null : persons.get(0);
     }
 
+
+
+    public Person findById(int id) {
+        String sql = "SELECT * FROM person WHERE id = ? AND deleted = false";
+        List<Person> persons = jdbcTemplate.query(sql, new Object[]{id}, personRowMapper());
+        return persons.isEmpty() ? null : persons.get(0);
+    }
+
+    public List<Person> findAllByDeletedFalse() {
+        String sql = "SELECT * FROM person WHERE deleted = false";
+        return jdbcTemplate.query(sql, personRowMapper());
+    }
+
+    public void save(Person person) {
+        if (person.getId() == 0) {
+            String sql = "INSERT INTO person (username, first_name, email, deleted) VALUES (?, ?, ?, false)";
+            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail());
+        } else {
+            String sql = "UPDATE person SET username = ?, first_name = ?, email = ? WHERE id = ? AND deleted = false";
+            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail(), person.getId());
+        }
+    }
+
     public void deleteById(int id) {
-        String sql = "DELETE FROM person WHERE id = ?";
+        String sql = "UPDATE person SET deleted = true WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
 
-    public int update(Person person) {
-        String sql = "UPDATE person SET username = ?, first_name = ?, last_name = ?," +
-                " bd_date = ?, email = ?, role = ?, password = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getLast_name(), person.getBd_date(),
-                person.getEmail(), person.getRole(), person.getPassword(), person.getId());
+    private RowMapper<Person> personRowMapper() {
+        return (rs, rowNum) -> {
+            Person person = new Person();
+            person.setId(rs.getInt("id"));
+            person.setUsername(rs.getString("username"));
+            person.setFirst_name(rs.getString("first_name"));
+            person.setEmail(rs.getString("email"));
+            person.setDeleted(rs.getBoolean("deleted"));
+            return person;
+        };
     }
 
 }

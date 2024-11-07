@@ -1,6 +1,8 @@
 package ega.spring.fitnessClubJdbc.services;
 
+import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.SpaBooking;
+import ega.spring.fitnessClubJdbc.repositories.SpaBookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -15,10 +17,16 @@ import java.util.stream.Collectors;
 public class SpaBookingService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SpaBookingRepository spaBookingRepository;
 
     @Autowired
-    public SpaBookingService(JdbcTemplate jdbcTemplate) {
+    public SpaBookingService(JdbcTemplate jdbcTemplate, SpaBookingRepository spaBookingRepository) {
         this.jdbcTemplate = jdbcTemplate;
+        this.spaBookingRepository = spaBookingRepository;
+    }
+
+    public SpaBooking getBookingById(int bookingId) {
+        return spaBookingRepository.getBookingById(bookingId);
     }
 
     public void save(SpaBooking session) {
@@ -51,4 +59,31 @@ public class SpaBookingService {
 
         return count != null && count > 0;
     }
+
+    public List<SpaBooking> getUserSpaBookings(int userId) {
+        String sql = "SELECT * FROM spa_booking WHERE user_id = ? AND deleted = false";
+        return jdbcTemplate.query(sql, new Object[]{userId}, (rs, rowNum) -> {
+            SpaBooking booking = new SpaBooking();
+            booking.setId(rs.getInt("id"));
+            booking.setEmployeeId(rs.getInt("employee_id"));
+            booking.setUser(new Person());
+            booking.getUser().setId(rs.getInt("user_id"));
+            booking.setDate(rs.getTimestamp("date").toLocalDateTime());
+            booking.setStatus(rs.getString("status"));
+            return booking;
+        });
+    }
+
+    public List<SpaBooking> getAllBookings() {
+        return spaBookingRepository.findAll();
+    }
+
+    public void deleteById(int id) {
+        spaBookingRepository.deleteById(id);
+    }
+
+    public void updateBooking(int bookingId, SpaBooking spaBooking) {
+        spaBookingRepository.save(spaBooking);
+    }
+
 }
