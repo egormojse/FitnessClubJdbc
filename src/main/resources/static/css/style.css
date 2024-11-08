@@ -5,9 +5,8 @@ body {
     background-color: #000000; /* Черный фон */
     color: #fff; /* Белый текст */
     display: flex;
-    align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: auto;
     overflow: visible;
 }
 
@@ -58,7 +57,7 @@ body {
     z-index: 1;
     position: relative;
     text-align: center;
-    margin-top: 20px;
+    margin-top: 40px;
     box-sizing: border-box;
 }
 
@@ -523,3 +522,4 @@ form button:hover {
 .order-summary::-webkit-scrollbar-thumb:hover {
     background-color: #777;
 }
+
