@@ -26,20 +26,22 @@ public class SpaBookingRepository {
 
     public void save(SpaBooking spaBooking) {
         String sql = """
-            INSERT INTO spa_booking (id, user_id, procedure_id, date, status)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO spa_booking (id, user_id, procedure_id, date, time, status)
+            VALUES (?, ?, ?, ?, ?, ?)
             ON CONFLICT (id) DO UPDATE
-            SET user_id = ?, procedure_id = ?, date = ?, status = ?;
+            SET user_id = ?, procedure_id = ?, date = ?, time = ?, status = ?;
         """;
         jdbcTemplate.update(sql,
                 spaBooking.getId(),
                 spaBooking.getUser().getId(),
                 spaBooking.getProcedure().getId(),
                 spaBooking.getDate(),
+                spaBooking.getTime(),
                 spaBooking.getStatus(),
                 spaBooking.getUser().getId(),
                 spaBooking.getProcedure().getId(),
                 spaBooking.getDate(),
+                spaBooking.getTime(),
                 spaBooking.getStatus()
         );
     }
@@ -51,7 +53,8 @@ public class SpaBookingRepository {
             spaBooking.setEmployeeId(rs.getInt("employee_id"));
             spaBooking.setUser(new Person());
             spaBooking.getUser().setId(rs.getInt("user_id"));
-            spaBooking.setDate(rs.getTimestamp("date").toLocalDateTime());
+            spaBooking.setDate(rs.getTimestamp("date"));
+            spaBooking.setTime(rs.getTime("time").toLocalTime());
             return spaBooking;
         };
     }

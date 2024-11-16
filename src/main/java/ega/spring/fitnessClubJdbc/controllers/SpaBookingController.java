@@ -14,10 +14,8 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -47,7 +45,6 @@ public class SpaBookingController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("employees", spaEmployeeService.getAllEmployees());
 
-        // Retrieve all procedures to show on the booking form
         model.addAttribute("procedures", spaProcedureService.getAllProcedures());
 
         List<String> allTimes = List.of("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
@@ -74,7 +71,7 @@ public class SpaBookingController {
     @GetMapping("/checkAvailability")
     @ResponseBody
     public Map<String, Object> checkAvailability(@RequestParam int employeeId,
-                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+                                                 @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date) {
         List<String> occupiedTimes = spaBookingService.getOccupiedTimes(employeeId, date);
 
         List<String> allTimes = List.of("10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00");
@@ -90,17 +87,19 @@ public class SpaBookingController {
     @PostMapping("/submit")
     public String submitSpaBooking(@RequestParam int employeeId,
                                    @RequestParam int procedureId,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
                                    @RequestParam String time,
                                    @RequestParam int userId,
                                    Principal principal,
                                    Model model) {
+        // Проверка на занятость времени
         if (spaBookingService.isTimeOccupied(employeeId, date, time)) {
             model.addAttribute("errorMessage", "Выбранное время занято. Пожалуйста, выберите другое время.");
             return showSpaForm(model, principal);
         }
 
-        LocalDateTime spaDateTime = LocalDateTime.of(date, LocalTime.parse(time));
+        LocalTime localTime = LocalTime.parse(time);
+
         SpaEmployee employee = spaEmployeeService.getEmployeeById(employeeId);
         Person user = personDetailsService.getUserById(userId);
         SpaProcedure procedure = spaProcedureService.getProcedureById(procedureId);
@@ -118,11 +117,13 @@ public class SpaBookingController {
         booking.setEmployeeId(employeeId);
         booking.setUser(user);
         booking.setProcedure(procedure);
-        booking.setDate(spaDateTime);
+        booking.setDate(date);
+        booking.setTime(localTime);
         booking.setStatus("Зарегистрирован(а)");
 
         spaBookingService.save(booking);
         return "index";
     }
+
 
 }

@@ -2,8 +2,6 @@ package ega.spring.fitnessClubJdbc.services;
 
 import ega.spring.fitnessClubJdbc.models.SpaEmployee;
 import ega.spring.fitnessClubJdbc.models.Trainer;
-import ega.spring.fitnessClubJdbc.repositories.SpaEmployeeRepository;
-import ega.spring.fitnessClubJdbc.repositories.TrainerRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;

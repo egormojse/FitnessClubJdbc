@@ -3,7 +3,9 @@ package ega.spring.fitnessClubJdbc.models;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -15,9 +17,9 @@ public class PersonMembership {
 
     private MembershipType membershipType;
 
-    private LocalDate startDate;
+    private Date startDate;
 
-    private LocalDate endDate;
+    private Date endDate;
 
     private Integer remainingGymVisits;
     private Integer remainingSpaVisits;

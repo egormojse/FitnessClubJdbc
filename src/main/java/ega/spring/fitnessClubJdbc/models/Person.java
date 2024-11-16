@@ -6,17 +6,23 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Date;
 
 @Getter
 @Setter
-
-public class Person {
+public class Person implements Serializable {
     private int id;
 
+    @Serial
+    private static final long serialVersionUID = 123456789L;
+
+
     public Person(int id, String username, String first_name, String last_name,
-                  LocalDate bd_date, String email, String role, String password) {
+                  Date bd_date, String email, String role, String password) {
         this.id = id;
         this.username = username;
         this.first_name = first_name;
@@ -40,15 +46,7 @@ public class Person {
 
     @NotNull(message = "Введите дату рождения")
     @DateTimeFormat(pattern = "MM-dd-yyyy")
-    private LocalDate bd_date;
-
-    @AssertTrue(message = "Возраст должен быть больше 12 лет")
-    public boolean isAgeValid() {
-        if (bd_date == null) {
-            return false;
-        }
-        return Period.between(bd_date, LocalDate.now()).getYears() >= 12;
-    }
+    private Date bd_date;
 
     @Email(message = "Неверный формат электронной почты")
     private String email;
@@ -63,8 +61,4 @@ public class Person {
     public Person() {
 
     }
-
-
-
-
 }

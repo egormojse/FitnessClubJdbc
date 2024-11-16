@@ -3,11 +3,13 @@ package ega.spring.fitnessClubJdbc.models;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.io.Serializable;
+import java.time.LocalTime;
+import java.util.Date;
 
 @Getter
 @Setter
-public class GymBooking {
+public class GymBooking  {
 
     private int id;
 
@@ -15,11 +17,14 @@ public class GymBooking {
 
     private Trainer trainer;
 
-    private LocalDateTime date;
+    private Date date;
 
     private String status;
 
     private boolean deleted;
+
+    private LocalTime time;
+
 
     public GymBooking() {}
 }

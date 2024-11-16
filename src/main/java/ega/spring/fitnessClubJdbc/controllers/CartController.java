@@ -34,21 +34,17 @@ public class CartController {
         this.personDetailsService = personDetailsService;
     }
 
-    // Главная страница магазина с товарами
     @GetMapping
     public String viewShop(Model model) {
         List<Product> products = productService.findAll();
         model.addAttribute("products", products);
-        return "shop/shop";  // Страница с товарами
+        return "shop/shop";
     }
 
-    // Просмотр корзины
     @GetMapping("/cart")
     public String viewCart(HttpSession session, Model model, Principal principal) {
-        // Попробуем получить объект заказа из сессии
         Order order = (Order) session.getAttribute("order");
 
-        // Если заказа нет, создаем новый
         if (order == null) {
             order = new Order();
             session.setAttribute("order", order);
@@ -62,11 +58,10 @@ public class CartController {
             model.addAttribute("currentUser", currentUser);
         }
 
-        return "shop/cart"; // Возвращаем страницу корзины
+        return "shop/cart";
     }
 
 
-    // Добавление товара в корзину
     @PostMapping("/cart/add")
     public String addToCart(@RequestParam int productId, @RequestParam int quantity, HttpSession session) {
         Product product = productService.findById(productId);
@@ -79,24 +74,20 @@ public class CartController {
 
         orderService.addProductToOrder(order, product, quantity);
         session.setAttribute("order", order);
-        return "redirect:/shop/cart";  // Возврат к странице корзины
+        return "redirect:/shop/cart";
     }
 
-    // Удаление товара из корзины
     @PostMapping("/cart/remove")
     public String removeFromCart(@RequestParam int productId, HttpSession session) {
-        Order order = (Order) session.getAttribute("order");  // Получаем заказ из сессии
+        Order order = (Order) session.getAttribute("order");
         if (order != null) {
-            // Ищем и удаляем товар из списка orderItems в заказе
             order.getOrderItems().removeIf(item -> item.getProduct().getId() == productId);
 
-            // Обновляем итоговую цену после удаления товара
             order.updateTotalPrice();
 
-            // Сохраняем обновленный заказ в сессии
             session.setAttribute("order", order);
         }
-        return "redirect:/shop/cart";   // Возврат к странице корзины
+        return "redirect:/shop/cart";
     }
 
     // Оформление заказа
@@ -112,9 +103,9 @@ public class CartController {
 
         order.setUser(user);
         orderService.processOrder(order);
-        session.removeAttribute("order");  // Очистка корзины после оформления заказа
+        session.removeAttribute("order");
 
         redirectAttributes.addFlashAttribute("success", "Заказ успешно оформлен!");
-        return "redirect:/shop";  // Возврат к главной странице магазина
+        return "redirect:/shop";
     }
 }

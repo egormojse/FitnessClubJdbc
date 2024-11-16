@@ -31,8 +31,8 @@ public class PersonMembershipRepository {
             membership.setId(rs.getInt("id"));
             membership.setPerson(new Person());
             membership.getPerson().setId(rs.getInt("person_id"));
-            membership.setStartDate(rs.getDate("start_date").toLocalDate());
-            membership.setEndDate(rs.getDate("end_date").toLocalDate());
+            membership.setStartDate(rs.getDate("start_date"));
+            membership.setEndDate(rs.getDate("end_date"));
             membership.setRemainingGymVisits(rs.getInt("remaining_gym_visits"));
             membership.setRemainingSpaVisits(rs.getInt("remaining_spa_visits"));
             return membership;

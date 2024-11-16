@@ -45,8 +45,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="workout : ${workouts}">
-                    <td th:text="${#temporals.format(workout.getDate(), 'yyyy-MM-dd')}"></td>
-                    <td th:text="${#temporals.format(workout.getDate(), 'HH:mm')}"></td>
+                    <!-- Используем #dates.format для форматирования даты и времени -->
+                    <td th:text="${#dates.format(workout.getDate(), 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#temporals.format(workout.time, 'HH:mm')}"></td>
                     <td th:text="${workout.getTrainer().getName()}"></td>
                     <td th:text="${workout.getStatus()}"></td>
                 </tr>
@@ -67,8 +68,9 @@
                 </thead>
                 <tbody>
                 <tr th:each="spaBooking : ${spaBookings}">
-                    <td th:text="${#temporals.format(spaBooking.getDate(), 'yyyy-MM-dd')}"></td>
-                    <td th:text="${#temporals.format(spaBooking.getDate(), 'HH:mm')}"></td>
+                    <!-- Используем #dates.format для форматирования даты и времени -->
+                    <td th:text="${#dates.format(spaBooking.getDate(), 'yyyy-MM-dd')}"></td>
+                    <td th:text="${#temporals.format(spaBooking.time, 'HH:mm')}"></td>
                     <td th:text="${spaBooking.getEmployeeName()}"></td>
                     <td th:text="${spaBooking.getStatus()}"></td>
                 </tr>
@@ -91,6 +93,7 @@
                 <tbody>
                 <tr th:each="order : ${orders}">
                     <td th:text="${order.getId()}"></td>
+                    <!-- Используем #dates.format для форматирования даты и времени -->
                     <td th:text="${#dates.format(order.getDate(), 'yyyy-MM-dd')}"></td>
                     <td th:text="${#dates.format(order.getDate(), 'HH:mm')}"></td>
                     <td th:text="${order.getTotal_price()}"></td>

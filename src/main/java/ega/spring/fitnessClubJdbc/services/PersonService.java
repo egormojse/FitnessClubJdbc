@@ -15,6 +15,8 @@ public class PersonService {
 
     private final PersonRepository personRepository;
 
+
+
     @Autowired
     public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
         this.personRepository = personRepository;
@@ -28,7 +30,8 @@ public class PersonService {
     }
 
     public List<Person> getAllPersons() {
-        return personRepository.findAllByDeletedFalse();
+        List<Person> persons = personRepository.findAllByDeletedFalse();
+        return persons;
     }
 }
 

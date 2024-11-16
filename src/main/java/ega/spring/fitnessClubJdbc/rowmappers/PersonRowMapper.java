@@ -15,7 +15,7 @@ public class PersonRowMapper implements RowMapper<Person> {
         person.setUsername(rs.getString("username"));
         person.setFirst_name(rs.getString("first_name"));
         person.setLast_name(rs.getString("last_name"));
-        person.setBd_date(rs.getDate("bd_date").toLocalDate());
+        person.setBd_date(rs.getDate("bd_date"));
         person.setEmail(rs.getString("email"));
         person.setRole(rs.getString("role"));
         person.setPassword(rs.getString("password"));

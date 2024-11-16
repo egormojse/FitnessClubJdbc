@@ -49,7 +49,8 @@ public class WorkoutBookingRepository {
         return (rs, rowNum) -> {
             GymBooking booking = new GymBooking();
             booking.setId(rs.getInt("id"));
-            booking.setDate(rs.getObject("date", LocalDateTime.class));
+            booking.setDate(rs.getDate("date"));
+            booking.setTime(rs.getTime("time").toLocalTime());
             booking.setUser(new Person());
             booking.getUser().setId(rs.getInt("user_id"));
             booking.setTrainer(new Trainer());

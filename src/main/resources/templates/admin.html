@@ -94,8 +94,8 @@
         <div class="tab-content" id="bookingPanel">
             <h2>Бронирования</h2>
             <div th:each="booking : ${bookings}" class="card">
-                <p th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
-                <p th:text="${#temporals.format(booking.getDate(), 'HH:mm')}"></p>
+                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
+                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
                 <p th:text="${booking.getStatus()}">Статус</p>
             </div>
             <div class="actions">
@@ -109,8 +109,8 @@
                     <option value="">Выберите бронирование</option>
                     <option th:each="booking : ${bookings}"
                             th:value="${booking.getId()}"
-                            th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')} + ' '+
-                            ${#temporals.format(booking.getDate(), 'HH:mm')}"></option>
+                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+
                 </select>
                 <label>Статус:
                     <input type="text" name="details" required placeholder="Введите новый статус">
@@ -125,8 +125,8 @@
                     <option value="">Выберите бронирование</option>
                     <option th:each="booking : ${bookings}"
                             th:value="${booking.getId()}"
-                            th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')} + ' '+
-                            ${#temporals.format(booking.getDate(), 'HH:mm')}"></option>
+                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+
                 </select>
                 <p>Вы уверены, что хотите удалить бронирование?</p>
                 <button type="submit">Удалить</button>
@@ -137,8 +137,8 @@
         <div class="tab-content" id="bookingSpaPanel">
             <h2>Бронирования</h2>
             <div th:each="booking : ${spaBookings}" class="card">
-                <p th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
-                <p th:text="${#temporals.format(booking.getDate(), 'HH:mm')}"></p>
+                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
+                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
                 <p th:text="${booking.getStatus()}">Статус</p>
             </div>
             <div class="actions">
@@ -152,8 +152,8 @@
                     <option value="">Выберите бронирование</option>
                     <option th:each="booking : ${bookings}"
                             th:value="${booking.getId()}"
-                            th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')} + ' '+
-                            ${#temporals.format(booking.getDate(), 'HH:mm')}"></option>
+                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+
                 </select>
                 <label>Статус:
                     <input type="text" name="details" required placeholder="Введите новый статус">
@@ -168,8 +168,8 @@
                     <option value="">Выберите бронирование</option>
                     <option th:each="booking : ${bookings}"
                             th:value="${booking.getId()}"
-                            th:text="${#temporals.format(booking.getDate(), 'yyyy-MM-dd')} + ' '+
-                            ${#temporals.format(booking.getDate(), 'HH:mm')}"></option>
+                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+
                 </select>
                 <p>Вы уверены, что хотите удалить бронирование?</p>
                 <button type="submit">Удалить</button>

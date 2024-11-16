@@ -8,6 +8,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class MembershipService {
@@ -25,12 +27,17 @@ public class MembershipService {
 
         PersonMembership existingMembership = findActiveMembershipByPersonId(person.getId());
         if (existingMembership != null) {
-            if (existingMembership.getEndDate().isAfter(LocalDate.now())) {
+            Date currentDate = new Date();
+
+            if (existingMembership.getEndDate().after(currentDate)) {
                 existingMembership.setRemainingGymVisits(existingMembership.getRemainingGymVisits() + membershipType.getGymVisits());
                 existingMembership.setRemainingSpaVisits(existingMembership.getRemainingSpaVisits() + membershipType.getSpaVisits());
             } else {
-                existingMembership.setStartDate(LocalDate.now());
-                existingMembership.setEndDate(LocalDate.now().plusDays(membershipType.getDuration()));
+                Date startDate = currentDate;
+                Date endDate = new Date(currentDate.getTime() + TimeUnit.DAYS.toMillis(membershipType.getDuration()));
+
+                existingMembership.setStartDate(startDate);
+                existingMembership.setEndDate(endDate);
                 existingMembership.setRemainingGymVisits(membershipType.getGymVisits());
                 existingMembership.setRemainingSpaVisits(membershipType.getSpaVisits());
             }
@@ -39,8 +46,12 @@ public class MembershipService {
             PersonMembership personMembership = new PersonMembership();
             personMembership.setPerson(person);
             personMembership.setMembershipType(membershipType);
-            personMembership.setStartDate(LocalDate.now());
-            personMembership.setEndDate(LocalDate.now().plusDays(membershipType.getDuration()));
+
+            Date startDate = new Date();
+            Date endDate = new Date(startDate.getTime() + TimeUnit.DAYS.toMillis(membershipType.getDuration()));
+
+            personMembership.setStartDate(startDate);
+            personMembership.setEndDate(endDate);
             personMembership.setRemainingGymVisits(membershipType.getGymVisits());
             personMembership.setRemainingSpaVisits(membershipType.getSpaVisits());
 
@@ -48,13 +59,13 @@ public class MembershipService {
         }
     }
 
+
     private Person getPersonByUsername(String username) {
         String sql = "SELECT * FROM person WHERE username = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
             Person person = new Person();
             person.setId(rs.getInt("id"));
             person.setUsername(rs.getString("username"));
-            // Установите другие поля, если они есть
             return person;
         });
     }
@@ -67,7 +78,6 @@ public class MembershipService {
             membershipType.setGymVisits(rs.getInt("gym_visits"));
             membershipType.setSpaVisits(rs.getInt("spa_visits"));
             membershipType.setDuration(rs.getInt("duration"));
-            // Установите другие поля, если они есть
             return membershipType;
         });
     }
@@ -78,12 +88,11 @@ public class MembershipService {
             PersonMembership membership = new PersonMembership();
             membership.setId(rs.getInt("id"));
             membership.setPerson(new Person());
-            membership.getPerson().setId(rs.getInt("user_id"));
-            membership.setStartDate(rs.getDate("start_date").toLocalDate());
-            membership.setEndDate(rs.getDate("end_date").toLocalDate());
+            membership.getPerson().setId(rs.getInt("person_id"));
+            membership.setStartDate(rs.getDate("start_date"));
+            membership.setEndDate(rs.getDate("end_date"));
             membership.setRemainingGymVisits(rs.getInt("remaining_gym_visits"));
             membership.setRemainingSpaVisits(rs.getInt("remaining_spa_visits"));
-            // Установите другие поля, если они есть
             return membership;
         });
     }

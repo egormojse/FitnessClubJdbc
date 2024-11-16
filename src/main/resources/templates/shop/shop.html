@@ -14,7 +14,7 @@
             <div class="product-item">
                 <h2 th:text="${product.name}">Название продукта</h2>
                 <p th:text="${product.description}">Описание продукта</p>
-                <p>Цена: <span th:text="${product.price}">0.00</span> ₽</p>
+                <p>Цена: <span th:text="${product.price}">0.00</span> BYN</p>
                 <p>В наличии: <span th:text="${product.stock}">0</span></p>
                 <form action="/shop/cart/add" method="post">
                     <!-- Защита CSRF -->
@@ -32,6 +32,8 @@
         </th:block>
     </div>
     <a href="/shop/cart" class="btn-view-cart">Просмотреть корзину</a>
+    <a href="/FitnessClub" class="btn-view-home">На главную страницу</a>
+
 </div>
 </body>
 </html>

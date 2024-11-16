@@ -1,9 +1,14 @@
 package ega.spring.fitnessClubJdbc.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.repositories.PersonRepository;
 import ega.spring.fitnessClubJdbc.security.PersonDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -19,6 +26,12 @@ public class PersonDetailsService implements UserDetailsService {
 
     private final PersonRepository personRepository;
     private final JdbcTemplate jdbcTemplate;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired
     public PersonDetailsService(PersonRepository personRepository, JdbcTemplate jdbcTemplate) {
@@ -46,7 +59,7 @@ public class PersonDetailsService implements UserDetailsService {
             Person person = new Person();
             person.setId(rs.getInt("id"));
             person.setUsername(rs.getString("username"));
-            person.setFirst_name(rs.getString("first_name")); // Убедитесь, что поле в БД действительно называется "first_name"
+            person.setFirst_name(rs.getString("first_name"));
             person.setEmail(rs.getString("email"));
             person.setPassword(rs.getString("password"));
             person.setRole(rs.getString("role"));
@@ -55,9 +68,33 @@ public class PersonDetailsService implements UserDetailsService {
     }
 
     public List<Person> findAll() {
+        String cachedPersonsJson = redisTemplate.opsForValue().get("allPersons").toString();
+
+        if (cachedPersonsJson != null) {
+            try {
+                return objectMapper.readValue(cachedPersonsJson, new TypeReference<List<Person>>() {});
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         String sql = "SELECT * FROM person WHERE deleted = false";
-        return jdbcTemplate.query(sql, personRowMapper());
+        List<Person> persons = jdbcTemplate.query(sql, personRowMapper());
+
+        try {
+            String personsJson = objectMapper.writeValueAsString(persons);
+
+            redisTemplate.opsForValue().set("allPersons", personsJson);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return persons;
     }
+
+
+
 
     public void deleteUserById(int id) {
         String sql = "UPDATE person SET deleted = true WHERE id = ?";
@@ -74,7 +111,7 @@ public class PersonDetailsService implements UserDetailsService {
             Person person = new Person();
             person.setId(rs.getInt("id"));
             person.setUsername(rs.getString("username"));
-            person.setPassword(rs.getString("password")); // Убедитесь, что это поле загружается
+            person.setPassword(rs.getString("password"));
             person.setFirst_name(rs.getString("first_name"));
             person.setEmail(rs.getString("email"));
             person.setDeleted(rs.getBoolean("deleted"));
