@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -40,14 +41,15 @@ public class PersonRepository {
     }
 
     public void save(Person person) {
-        if (person.getId() == 0) {
-            String sql = "INSERT INTO person (username, first_name, email, deleted) VALUES (?, ?, ?, false)";
-            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail());
-        } else {
-            String sql = "UPDATE person SET username = ?, first_name = ?, email = ? WHERE id = ? AND deleted = false";
-            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail(), person.getId());
+        if (person.getId() == 0) { // Новый пользователь
+            String sql = "INSERT INTO person (username, first_name, email, password, deleted) VALUES (?, ?, ?, ?, false)";
+            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail(), person.getPassword());
+        } else { // Обновление существующего пользователя
+            String sql = "UPDATE person SET username = ?, first_name = ?, email = ?, password = ? WHERE id = ? AND deleted = false";
+            jdbcTemplate.update(sql, person.getUsername(), person.getFirst_name(), person.getEmail(), person.getPassword(), person.getId());
         }
     }
+
 
     public void deleteById(int id) {
         String sql = "UPDATE person SET deleted = true WHERE id = ?";
@@ -65,5 +67,6 @@ public class PersonRepository {
             return person;
         };
     }
+
 
 }

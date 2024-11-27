@@ -3,12 +3,21 @@ package ega.spring.fitnessClubJdbc.controllers;
 import ega.spring.fitnessClubJdbc.dto.EmployeeRegistrationDto;
 import ega.spring.fitnessClubJdbc.models.*;
 import ega.spring.fitnessClubJdbc.services.*;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -21,14 +30,16 @@ public class AdminController {
     private final SpaBookingService spaBookingService;
     private final OrderService orderService;
     private final SpaEmployeeService spaEmployeeService;
+    private final AnalysisService analysisService;
 
-    public AdminController(PersonDetailsService personService, TrainerService trainerService, BookingService bookingService, SpaBookingService spaBookingService, OrderService orderService, SpaEmployeeService spaEmployeeService) {
+    public AdminController(PersonDetailsService personService, TrainerService trainerService, BookingService bookingService, SpaBookingService spaBookingService, OrderService orderService, SpaEmployeeService spaEmployeeService, AnalysisService analysisService) {
         this.personService = personService;
         this.trainerService = trainerService;
         this.bookingService = bookingService;
         this.spaBookingService = spaBookingService;
         this.orderService = orderService;
         this.spaEmployeeService = spaEmployeeService;
+        this.analysisService = analysisService;
     }
 
     @GetMapping("/admin")
@@ -38,8 +49,15 @@ public class AdminController {
         model.addAttribute("spaEmployees", spaEmployeeService.getAllEmployees());
         model.addAttribute("bookings", bookingService.getAllBookings());
         model.addAttribute("spaBookings", spaBookingService.getAllBookings());
-        model.addAttribute("orders", orderService.getAllOrders());
+        model.addAttribute("orders", orderService.getAll());
         model.addAttribute("employee", new EmployeeRegistrationDto());
+
+        model.addAttribute("popularTimes", analysisService.getPopularTimes());
+        model.addAttribute("popularSpaTimes", analysisService.getPopularSpaTimes());
+        model.addAttribute("popularTrainers", analysisService.getPopularTrainers());
+        model.addAttribute("popularSpaEmployees", analysisService.getPopularSpaEmployees());
+        model.addAttribute("popularProducts", analysisService.getPopularProducts());
+
         return "admin";
     }
 
@@ -237,4 +255,124 @@ public class AdminController {
 
         return "admin";
     }
+
+    @GetMapping("/analysis/export")
+    public void exportAnalysisData(
+            @RequestParam String exportTypes, // Список через запятую: users,orders,bookings
+            HttpServletResponse response) throws IOException {
+
+
+        // Создаем Excel Workbook
+        Workbook workbook = new XSSFWorkbook();
+
+        // Разбираем, какие данные экспортировать
+        List<String> exportTypeList = Arrays.asList(exportTypes.split(","));
+
+        // Экспорт пользователей
+        if (exportTypeList.contains("users-export")) {
+            Sheet userSheet = workbook.createSheet("Пользователи");
+            List<Person> users = personService.findAll();
+            fillUserSheet(userSheet, users);
+        }
+
+        // Экспорт заказов
+        if (exportTypeList.contains("orders-export")) {
+            Sheet orderSheet = workbook.createSheet("Заказы");
+            List<Order> orders = orderService.getAllOrders();
+            fillOrderSheet(orderSheet, orders);
+        }
+
+        // Экспорт бронирований
+        if (exportTypeList.contains("bookings-export")) {
+            Sheet bookingSheet = workbook.createSheet("Бронирования тренировок");
+            List<GymBooking> bookings = bookingService.getAllBookings();
+            fillBookingSheet(bookingSheet, bookings);
+        }
+
+        if (exportTypeList.contains("spa-bookings-export")) {
+            Sheet bookingSheet = workbook.createSheet("Бронирования Спа");
+            List<SpaBooking> bookings = spaBookingService.getAllBookings();
+            fillSpaBookingSheet(bookingSheet, bookings);
+        }
+
+        // Устанавливаем заголовки ответа
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=export_data.xlsx");
+
+        // Записываем Excel-файл в поток
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+    private void fillUserSheet(Sheet sheet, List<Person> users) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Имя");
+        header.createCell(2).setCellValue("Email");
+        header.createCell(3).setCellValue("Роль");
+
+        int rowIndex = 1;
+        for (Person user : users) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(user.getId());
+            row.createCell(1).setCellValue(user.getFirst_name());
+            row.createCell(2).setCellValue(user.getEmail());
+            row.createCell(3).setCellValue(user.getRole());
+        }
+    }
+
+    private void fillBookingSheet(Sheet sheet, List<GymBooking> bookings) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Дата");
+        header.createCell(2).setCellValue("Время");
+        header.createCell(3).setCellValue("Статус");
+
+        int rowIndex = 1;
+        for (GymBooking booking : bookings) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(booking.getId());
+            row.createCell(1).setCellValue(booking.getDate().toString());
+            row.createCell(2).setCellValue(booking.getTime().toString());
+            row.createCell(3).setCellValue(booking.getStatus());
+        }
+    }
+
+    private void fillSpaBookingSheet(Sheet sheet, List<SpaBooking> bookings) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Дата");
+        header.createCell(2).setCellValue("Время");
+        header.createCell(3).setCellValue("Статус");
+
+        int rowIndex = 1;
+        for (SpaBooking booking : bookings) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(booking.getId());
+            row.createCell(1).setCellValue(booking.getDate().toString());
+            row.createCell(2).setCellValue(booking.getTime().toString());
+            row.createCell(3).setCellValue(booking.getStatus());
+        }
+    }
+
+    private void fillOrderSheet(Sheet sheet, List<Order> orders) {
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Дата");
+        header.createCell(2).setCellValue("Время");
+        header.createCell(3).setCellValue("Сумма");
+        header.createCell((4)).setCellValue("Статус");
+
+        int rowIndex = 1;
+        for (Order order : orders) {
+            Row row = sheet.createRow(rowIndex++);
+            row.createCell(0).setCellValue(order.getId());
+            row.createCell(1).setCellValue(order.getDate().toString());
+            row.createCell(2).setCellValue(order.getTime().toString());
+            row.createCell(3).setCellValue(order.getTotal_price());
+            row.createCell(4).setCellValue(order.getStatus());
+        }
+    }
+
+
 }

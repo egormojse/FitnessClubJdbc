@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конструктор абонемента</title>
+    <link rel="stylesheet" href="/css/constructor.css">
+</head>
+<body>
+<a href="/FitnessClub" class="btn-home">На главную</a>
+
+<h1>Конструктор абонемента</h1>
+<form id="membershipForm" action="/purchase/constructor" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <label for="gymVisits">Количество посещений зала:</label>
+    <span id="gymVisitsValue">10</span>
+    <input type="range" id="gymVisits" name="gymVisits" min="0" max="30" value="10" step="1" oninput="updateGymVisitsValue(this.value)">
+
+    <label for="spaVisits">Количество посещений SPA:</label>
+    <span id="spaVisitsValue">5</span>
+    <input type="range" id="spaVisits" name="spaVisits" min="0" max="30" value="5" step="1" oninput="updateSpaVisitsValue(this.value)">
+
+    <label for="duration">Длительность (в неделях):</label>
+    <span id="durationValue">4 недели</span>
+    <input type="range" id="duration" name="duration" min="1" max="52" value="4" step="1" oninput="updateDurationValue(this.value)">
+
+    <h3>Итоговая цена: <span id="totalPrice">0</span> BYN</h3>
+    <button type="submit">Купить</button>
+</form>
+
+<script>
+    function updateGymVisitsValue(value) {
+        document.getElementById('gymVisitsValue').textContent = value;
+        calculatePrice();
+    }
+
+    function updateSpaVisitsValue(value) {
+        document.getElementById('spaVisitsValue').textContent = value;
+        calculatePrice();
+    }
+
+    function updateDurationValue(value) {
+        document.getElementById('durationValue').textContent = `${value} ${getWeeksLabel(value)}`;
+        calculatePrice();
+    }
+
+    function calculatePrice() {
+        const gymVisits = parseInt(document.getElementById('gymVisits').value, 10);
+        const spaVisits = parseInt(document.getElementById('spaVisits').value, 10);
+        const duration = parseInt(document.getElementById('duration').value, 10);
+
+        const price = (gymVisits * 1.5) + (spaVisits * 1.5) + (duration * 20);
+        document.getElementById('totalPrice').textContent = price.toFixed(2);
+    }
+
+    function getWeeksLabel(value) {
+        if (value === "1") return "неделя";
+        if (value >= "2" && value <= "4") return "недели";
+        return "недель";
+    }
+
+    // Инициализация расчета цены при загрузке страницы
+    calculatePrice();
+</script>
+</body>
+</html>

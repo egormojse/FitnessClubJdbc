@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Getter
 @Setter
-public class Order {
+public class Order implements Serializable {
 
     private int id;
 
@@ -23,6 +24,8 @@ public class Order {
     private String status = "Обрабатывается";
 
     private boolean deleted;
+
+    private LocalTime time;
 
     private List<OrderItem> orderItems = new ArrayList<>();
 

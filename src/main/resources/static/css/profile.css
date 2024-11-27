@@ -142,3 +142,72 @@ th {
 .profile-form button:hover {
     background-color: #ff3366; /* Brighter neon red */
 }
+
+.btn:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+.btn-danger {
+    position: absolute;
+    right: 20px;
+    width: 150px; /* Одинаковая ширина для обеих кнопок */
+    background-color: #ff0033; /* Неоново-красный цвет */
+    color: #ffffff; /* Белый текст */
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 10px; /* Отступы для визуального выравнивания */
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-home {
+    position: absolute;
+    top: 20px; /* Расстояние от верхнего края */
+    left: 20px; /* Расстояние от правого края */
+    background-color: #ff0033; /* Цвет кнопки */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-home:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+.btn-danger:hover {
+    background-color: #ff3366; /* Более яркий красный при наведении */
+}
+
+.profile-form {
+    align-items: center;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+    padding: 20px;
+    margin: 20px auto;
+
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Легкая тень */
+    border: 1px solid #ff0033; /* Неоново-красная граница */
+    width: 400px;
+}
+
+.card h3 {
+    color: #ff0033; /* Заголовок карточки в неоново-красном */
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #ffffff; /* Белый текст */
+    margin: 5px 0;
+}
+

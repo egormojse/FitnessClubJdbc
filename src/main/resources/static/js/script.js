@@ -55,3 +55,24 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+document.addEventListener("DOMContentLoaded", () => {
+    const toggleBtn = document.querySelector('.toggle-btn');
+    const toggleContent = document.querySelector('.toggle-content');
+    const toggleBtnIcon = document.querySelector('.toggle-btn-icon');
+
+    let isOpen = false;
+
+    toggleBtn.addEventListener('click', () => {
+        if (!isOpen) {
+            toggleBtn.style.width = '300px';
+            toggleContent.style.display = 'block';
+            toggleBtnIcon.innerText = 'Закрыть';
+            isOpen = true;
+        } else {
+            toggleBtn.style.width = '50px';
+            toggleContent.style.display = 'none';
+            toggleBtnIcon.innerText = 'О нас';
+            isOpen = false;
+        }
+    });
+});

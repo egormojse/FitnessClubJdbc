@@ -1,82 +1,369 @@
-.admin-container {
-    display: flex;
+body {
+    background: url('/images/back2.jpg') no-repeat center center fixed;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: #fff; /* Белый текст */
+    display: block;
+    justify-content: center;
+    height: auto;
+    overflow: visible;
 }
 
-.sidebar {
-    width: 200px;
-    background: #1a1a1a; /* Dark background for sidebar */
-    color: #ffffff; /* White text */
-    padding: 20px;
-    border-right: 2px solid #ff0033; /* Neon red border */
+h3, h4 {
+    color: #ff073a; /* Неоново-красный */
 }
 
-.main-content {
-    flex-grow: 1;
+.popular-section {
+    margin: 20px 0;
+    text-align: center;
+    color: #fff; /* Белый текст */
+}
+
+.popular-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px auto;
+    padding: 10px;
+}
+
+.order-card{
+    background-color: #111; /* Темный фон карточек */
     padding: 20px;
-    background-color: #000000; /* Black background */
-    color: #ffffff; /* White text */
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Увеличиваем отступы между элементами */
+    margin-top: 10px;: ;
+}
+.spa-card{
+    background-color: #111; /* Темный фон карточек */
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Увеличиваем отступы между элементами */
+    margin-top: 10px;: ;
+}
+
+.training-card{
+    background-color: #111; /* Темный фон карточек */
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Увеличиваем отступы между элементами */
+    margin-top: 10px;: ;
+}
+
+.user-card {
+    background-color: #111; /* Темный фон карточек */
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Увеличиваем отступы между элементами */
+    margin-top: 10px;: ;
 }
 
 .card {
+    background-color: #111; /* Темный фон карточек */
+    padding: 20px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 10px; /* Увеличиваем отступы между элементами */
+    margin-top: 10px;: ;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+}
+
+.card ul {
+    list-style: none;
     margin: 20px 0;
+    padding: 10px;
+}
+
+.card ul li {
+    margin: 15px 0;
+    color: #ddd;
+    padding: 5px;
+}
+
+.sidebar {
+    background-color: rgba(44, 62, 80, 0.8); /* Прозрачный фон с темным оттенком */
     padding: 15px;
-    border: 1px solid #ff0033; /* Neon red border */
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar li {
+    margin: 10px 0;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     border-radius: 5px;
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sidebar li:hover, .sidebar li.active {
+    background-color: #ff073a; /* Неоново-красный */
+    color: #000; /* Черный текст */
+}
+
+.sidebar .icon {
+    font-size: 1.5rem;
 }
 
 .button {
+    background-color: #ff073a;
+    color: white;
     padding: 10px 15px;
-    margin: 5px;
-    cursor: pointer;
     border: none;
-    border-radius: 5px;
-    background-color: #ff0033; /* Neon red */
-    color: #ffffff; /* White text */
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
     transition: background-color 0.3s ease;
+    margin: 10px auto;
+    display: inline-block;
 }
 
 .button:hover {
-    background-color: #ff3366; /* Brighter neon red */
+    background-color: #d10428;
 }
 
-.accordion {
-    cursor: pointer;
-    padding: 10px;
-    background-color: #ff0033; /* Neon red */
-    color: #ffffff; /* White text */
-    border: none;
-    text-align: left;
-    outline: none;
+.tab-content {
+    max-width: 600px;
+    margin: 30px auto; /* Увеличиваем отступы между вкладками */
+    padding: 30px; /* Увеличиваем внутренние отступы */
+    background-color: #1c1c1c;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Увеличиваем тень для большего выделения */
+    color: #fff;
+    display: none; /* По умолчанию скрыты */
+}
+
+.tab-content.active {
+    display: block; /* Отображаем активную вкладку */
+}
+
+.tab-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px;
+}
+
+.tab-content ul li {
+    margin: 15px 0; /* Увеличиваем отступы между элементами списка */
+    color: #ddd;
+    font-size: 1.1rem; /* Немного увеличиваем размер текста */
+}
+
+/* Общие стили для форм */
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: none; /* Скрытые формы по умолчанию */
+}
+
+form.active {
+    display: block; /* Показываем активные формы */
+}
+
+form label {
     font-size: 16px;
-    transition: 0.4s;
+    color: #333;
+    display: block;
+    margin-bottom: 8px;
+}
+
+form select,
+form input {
     width: 100%;
-    margin: 10px 0;
+    padding: 10px;
+    margin: 10px 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.logout-form {
+    float: right; /* Размещает форму с кнопкой справа */
 }
 
-.accordion.active, .accordion:hover {
-    background-color: #ff3366; /* Brighter neon red */
+.search-container {
+    margin-bottom: 20px;
+}
+.search-container input {
+    padding: 10px;
+    width: 200px;
 }
 
-.panel {
-    display: none;
-    padding: 0 18px;
-    overflow: hidden;
-    background-color: #1a1a1a; /* Dark background */
-    color: #ffffff; /* White text */
-    position: relative;
-    margin: 10px 0;
-    border-left: 2px solid #ff0033; /* Neon red border */
-}
-
-.close-button {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: transparent;
+form button {
+    box-sizing: border-box; /* Включаем размер в общий расчет */
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+. btn-danger {
+    box-sizing: border-box; /* Включаем размер в общий расчет */
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+.btn:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+
+/* Стиль для кнопок действий в панели */
+.actions button {
+    background-color: #008CBA;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 12px 20px;
+    margin-right: 15px; /* Отступ между кнопками */
+    border-radius: 8px;
+    display: inline-block; /* Размещение кнопок в одном ряду */
+}
+
+
+.actions button:hover {
+    background-color: #007bb5;
+}
+
+.actions button:focus {
+    outline: none;
+}
+
+/* Стили для предупреждения удаления */
+form.delete-form p {
+    color: #ff0000;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Стиль для селекторов */
+select {
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+}
+
+/* Стили для формы экспорта */
+.export-form {
+    display: block;
+    background-color: #f4f4f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.export-form select {
+    margin-bottom: 20px;
+    padding: 12px;
+    width: 100%;
+}
+
+.export-form button {
+    background-color: #ff9800;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
-    color: #ff0033; /* Neon red */
 }
+
+.export-form button:hover {
+    background-color: #f57c00;
+}
+
+/* Популярные элементы */
+.popular-section {
+    margin-top: 30px;
+}
+
+.popular-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.popular-grid .card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.popular-grid .card h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.popular-grid .card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.popular-grid .card ul li {
+    font-size: 14px;
+    color: #666;
+}
+
+.search-container{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+

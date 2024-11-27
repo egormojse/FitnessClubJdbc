@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -25,7 +26,7 @@ public class MembershipService {
         Person person = getPersonByUsername(username);
         MembershipType membershipType = getMembershipTypeById(membershipTypeId);
 
-        PersonMembership existingMembership = findActiveMembershipByPersonId(person.getId());
+         PersonMembership existingMembership = findActiveMembershipByPersonId(person.getId());
         if (existingMembership != null) {
             Date currentDate = new Date();
 
@@ -59,6 +60,20 @@ public class MembershipService {
         }
     }
 
+    public void createConstructorMembership(Person person, MembershipType constructorType) {
+        Date startDate = new Date();
+        Date endDate = new Date(startDate.getTime() + TimeUnit.DAYS.toMillis(constructorType.getDuration()));
+
+        PersonMembership membership = new PersonMembership();
+        membership.setPerson(person);
+        membership.setMembershipType(constructorType);
+        membership.setStartDate(startDate);
+        membership.setEndDate(endDate);
+        membership.setRemainingGymVisits(constructorType.getGymVisits());
+        membership.setRemainingSpaVisits(constructorType.getSpaVisits());
+
+        saveMembership(membership);
+    }
 
     private Person getPersonByUsername(String username) {
         String sql = "SELECT * FROM person WHERE username = ?";
@@ -83,8 +98,9 @@ public class MembershipService {
     }
 
     private PersonMembership findActiveMembershipByPersonId(int personId) {
-        String sql = "SELECT * FROM person_membership WHERE person_id = ? AND end_date > ? ";
-        return jdbcTemplate.queryForObject(sql, new Object[]{personId, LocalDate.now()}, (rs, rowNum) -> {
+        String sql = "SELECT * FROM person_membership WHERE person_id = ? AND end_date > ?";
+
+        List<PersonMembership> memberships = jdbcTemplate.query(sql, new Object[]{personId, LocalDate.now()}, (rs, rowNum) -> {
             PersonMembership membership = new PersonMembership();
             membership.setId(rs.getInt("id"));
             membership.setPerson(new Person());
@@ -95,6 +111,9 @@ public class MembershipService {
             membership.setRemainingSpaVisits(rs.getInt("remaining_spa_visits"));
             return membership;
         });
+
+        // Возвращаем null, если список пустой, иначе первый элемент
+        return memberships.isEmpty() ? null : memberships.get(0);
     }
 
     private void updateMembership(PersonMembership membership) {

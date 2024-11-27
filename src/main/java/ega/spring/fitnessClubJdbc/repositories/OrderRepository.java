@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
+import ega.spring.fitnessClubJdbc.dto.PopularProduct;
 import ega.spring.fitnessClubJdbc.models.Order;
 import ega.spring.fitnessClubJdbc.models.Person;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,17 @@ public class OrderRepository {
     public void deleteById(int id) {
         String sql = "UPDATE orders SET deleted = true WHERE id = ?";
         jdbcTemplate.update(sql, id);
+    }
+
+    public List<PopularProduct> getPopularProducts() {
+        String sql = "SELECT p.name AS product_name, COUNT(*) AS count " +
+                "FROM orders o " +
+                "JOIN order_item oi ON o.id = oi.order_id " +
+                "JOIN product p ON oi.product_id = p.id " +
+                "GROUP BY p.name " +
+                "ORDER BY count DESC LIMIT 3";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PopularProduct(rs.getString("product_name"), rs.getInt("count")));
     }
 
 }

@@ -1,0 +1,147 @@
+/* Основные стили для страницы конструктора абонемента */
+body {
+
+    font-family: Arial, sans-serif;
+    background: url('/images/back2.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+.btn-home {
+    position: absolute;
+    top: 20px; /* Расстояние от верхнего края */
+    left: 20px; /* Расстояние от правого края */
+    background-color: #ff0033; /* Цвет кнопки */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-home:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+/* Заголовок страницы */
+h1 {
+    font-size: 28px;
+    color: #fff;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Стили для формы */
+form {
+    max-width: 600px;
+    margin: 30px auto;
+    background-color: rgba(44, 62, 80, 0.8); /* Прозрачный фон с темным оттенком */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    color: #fff; /* Белый текст для формы */
+}
+
+/* Стили для карточек пользователей */
+.card {
+    background-color: rgba(44, 62, 80, 0.8); /* Тот же темный полупрозрачный фон */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px; /* Отступы между карточками */
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Эффект при наведении на карточки */
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Стили для кнопок в карточках */
+button {
+    background-color: #e74c3c; /* Красный цвет кнопки */
+    color: #fff;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+/* Стили для текста в карточках */
+.card p {
+    font-size: 18px;
+    color: #fff;
+}
+
+/* Стили для ползунков */
+input[type="range"] {
+    width: 100%;
+    margin-bottom: 20px;
+    appearance: none;
+    background: #444; /* Темный фон для ползунка */
+    border-radius: 10px;
+    height: 10px;
+    outline: none;
+    transition: background 0.3s ease;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 10px;
+    background: #444; /* Темный цвет ползунка */
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff; /* Белый цвет ползунка */
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Стили для фокуса ползунка */
+input[type="range"]:focus {
+    background: #555; /* Увеличенный темный фон при фокусе */
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+    background: #ccc; /* Серый цвет ползунка при активном движении */
+}
+
+/* Стили для кнопок */
+button {
+    background-color: #e74c3c; /* Красный цвет кнопки */
+    color: #fff;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
+
+button:focus {
+    outline: none;
+}

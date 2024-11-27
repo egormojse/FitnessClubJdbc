@@ -11,6 +11,23 @@ body {
     background-size: cover;
     color: #ffffff; /* Белый текст */
 }
+.btn-home {
+    position: absolute;
+    top: 20px; /* Расстояние от верхнего края */
+    left: 20px; /* Расстояние от правого края */
+    background-color: #ff0033; /* Цвет кнопки */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-home:hover {
+    background-color: #c0392b; /* Более темный красный при наведении */
+}
 
 h1 {
     text-align: center;

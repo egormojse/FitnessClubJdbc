@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль</title>
     <link rel="stylesheet" href="/css/profile.css">
-    <script defer src="/js/admin.js"></script>
+    <script defer src="/js/profile.js"></script>
 </head>
 <body>
 <div class="background-image"></div>
+<a href="/FitnessClub" class="btn-home">На главную</a>
+
+
 <div class="container">
     <nav class="tabs">
         <div class="tab-button-wrapper">
@@ -23,13 +26,32 @@
     <div class="tab-content-wrapper">
         <div class="tab-content active" id="settings">
             <h2>Настройки профиля</h2>
+            <div class="card">
+
             <form action="/update-profile" method="post" class="profile-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 <label for="name">Имя:</label>
                 <input type="text" id="name" name="name" th:value="${user.getFirst_name()}" required>
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" th:value="${user.getEmail()}" required>
-                <button type="submit">Обновить</button>
+                <button type="submit" class="btn-danger">Обновить</button>
             </form>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="btn-danger">Выйти</button>
+            </form>
+
+            <div class="membership-info">
+                <h3>Информация о вашем абонементе</h3>
+                <p th:if="${personMembership != null}">
+                    Осталось посещений тренажерного зала: <span th:text="${personMembership.remainingGymVisits}"></span><br>
+                    Осталось посещений спа: <span th:text="${personMembership.remainingSpaVisits}"></span><br>
+                    Абонемент действует до: <span th:text="${#dates.format(personMembership.endDate, 'yyyy-MM-dd')}"></span>
+                </p>
+                <p th:if="${personMembership == null}">
+                    У вас нет активного абонемента.
+                </p>
+            </div>
+            </div>
         </div>
 
         <div class="tab-content" id="workouts">
@@ -93,9 +115,8 @@
                 <tbody>
                 <tr th:each="order : ${orders}">
                     <td th:text="${order.getId()}"></td>
-                    <!-- Используем #dates.format для форматирования даты и времени -->
                     <td th:text="${#dates.format(order.getDate(), 'yyyy-MM-dd')}"></td>
-                    <td th:text="${#dates.format(order.getDate(), 'HH:mm')}"></td>
+                    <td th:text="${#temporals.format(order.getTime(), 'HH:mm')}"></td>
                     <td th:text="${order.getTotal_price()}"></td>
                     <td th:text="${order.getStatus()}"></td>
                 </tr>

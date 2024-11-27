@@ -14,8 +14,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -50,12 +52,26 @@ public class BookingService {
         String sql = "SELECT time FROM workout_booking WHERE trainer_id = ? AND date = ? AND deleted = false";
 
         List<LocalTime> occupiedTimes = jdbcTemplate.query(sql, new Object[]{trainerId, localDate},
-                (rs, rowNum) -> rs.getTime("time").toLocalTime());
+                        (rs, rowNum) -> {
+                            // Получаем время, если оно не null
+                            java.sql.Time sqlTime = rs.getTime("time");
+                            return sqlTime != null ? sqlTime.toLocalTime() : null;
+                        })
+                .stream()
+                .filter(Objects::nonNull)  // Убираем null значения
+                .collect(Collectors.toList());
 
+        // Если нет забронированных времен, возвращаем пустой список
+        if (occupiedTimes.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // Преобразуем в список строк
         return occupiedTimes.stream()
                 .map(LocalTime::toString)
                 .collect(Collectors.toList());
     }
+
 
     public boolean isTimeOccupied(int trainerId, Date trainingDate, String trainingTime) {
         LocalDate localDate = trainingDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -133,4 +149,15 @@ public class BookingService {
         });
     }
 
+    public List<GymBooking> getBookingsForPeriod(String startDate, String endDate) {
+        String sql = "SELECT * FROM workout_booking WHERE date BETWEEN ? AND ?";
+        return jdbcTemplate.query(sql, new Object[]{startDate, endDate}, (rs, rowNum) -> {
+            GymBooking booking = new GymBooking();
+            booking.setId(rs.getInt("id"));
+            booking.setDate(rs.getDate("date"));
+            booking.setTime(rs.getTime("time").toLocalTime());
+            booking.setStatus(rs.getString("status"));
+            return booking;
+        });
+    }
 }

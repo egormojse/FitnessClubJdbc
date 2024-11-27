@@ -1,12 +1,16 @@
 package ega.spring.fitnessClubJdbc.controllers;
 
 import ega.spring.fitnessClubJdbc.models.*;
+import ega.spring.fitnessClubJdbc.repositories.PersonMembershipRepository;
 import ega.spring.fitnessClubJdbc.security.PersonDetails;
 import ega.spring.fitnessClubJdbc.services.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -16,10 +20,13 @@ public class HelloController {
 
 
     private final PersonDetailsService personDetailsService;
+    private final PersonMembershipRepository personMembershipRepository;
 
-    public HelloController(PersonDetailsService personDetailsService, BookingService workoutService,
+
+    public HelloController(PersonDetailsService personDetailsService, PersonMembershipRepository personMembershipRepository, BookingService workoutService,
                            OrderService orderService, SpaBookingService spaService, SpaEmployeeService spaEmployeeService, TrainerService trainerService) {
         this.personDetailsService = personDetailsService;
+        this.personMembershipRepository = personMembershipRepository;
         this.workoutService = workoutService;
         this.orderService = orderService;
         this.spaService = spaService;
@@ -48,6 +55,7 @@ public class HelloController {
     private final SpaEmployeeService spaEmployeeService;
     private final TrainerService trainerService;
 
+
     @GetMapping("/profile")
     public String profile(Model model, @AuthenticationPrincipal PersonDetails userDetails) {
         int userId = userDetails.getUserId();
@@ -55,9 +63,8 @@ public class HelloController {
         model.addAttribute("user", user);
         model.addAttribute("userId", userId);
 
-        System.out.println("Имя пользователя: " + user.getFirst_name());
-        System.out.println("Email пользователя: " + user.getEmail());
-
+        PersonMembership personMembership = personMembershipRepository.findActiveMembershipByPersonId(userId);
+        model.addAttribute("personMembership", personMembership);
 
         List<GymBooking> workouts = workoutService.getUserWorkouts(userId);
         List<SpaBooking> spaBookings = spaService.getUserSpaBookings(userId);
@@ -78,5 +85,31 @@ public class HelloController {
         model.addAttribute("orders", orders);
 
         return "profile";
+    }
+
+    @PostMapping("/update-profile")
+    public String updateProfile(@RequestParam("name") String name,
+                                @RequestParam("email") String email,
+                                RedirectAttributes redirectAttributes,
+                                @AuthenticationPrincipal PersonDetails userDetails) {
+        try {
+            // Получаем текущего пользователя (например, из сессии или контекста)
+            int userId = userDetails.getUserId();
+            Person currentUser = personDetailsService.getUserById(userId);
+
+            // Обновляем данные пользователя
+            currentUser.setFirst_name(name);
+            currentUser.setEmail(email);
+            personDetailsService.updateUser(userId, currentUser);
+
+            // Добавляем сообщение об успешном обновлении
+            redirectAttributes.addFlashAttribute("successMessage", "Профиль успешно обновлен.");
+        } catch (Exception e) {
+            // Добавляем сообщение об ошибке
+            redirectAttributes.addFlashAttribute("errorMessage", "Ошибка при обновлении профиля.");
+        }
+
+        // Перенаправляем пользователя обратно на страницу профиля
+        return "redirect:/profile";
     }
 }

@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
+import ega.spring.fitnessClubJdbc.dto.PopularSpaEmployee;
 import ega.spring.fitnessClubJdbc.models.SpaEmployee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -53,4 +54,18 @@ public class SpaEmployeeRepository {
             return spaEmployee;
         };
     }
+
+    public List<PopularSpaEmployee> getPopularSpaEmployees() {
+        String sql = "SELECT s.name AS name, COUNT(*) AS count " +
+                "FROM spa_booking sb " +
+                "JOIN spa_employees s ON sb.employee_id = s.id " +
+                "GROUP BY s.name " +
+                "ORDER BY count DESC LIMIT 3";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PopularSpaEmployee(
+                rs.getString("name"),
+                rs.getInt("count")
+        ));
+    }
+
 }

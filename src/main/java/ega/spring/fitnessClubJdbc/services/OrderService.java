@@ -1,16 +1,23 @@
 package ega.spring.fitnessClubJdbc.services;
 
+import ega.spring.fitnessClubJdbc.dto.OrderDTO;
 import ega.spring.fitnessClubJdbc.models.Order;
 import ega.spring.fitnessClubJdbc.models.OrderItem;
+import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.Product;
 import ega.spring.fitnessClubJdbc.repositories.OrderRepository;
+import ega.spring.fitnessClubJdbc.rowmappers.OrderRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -23,13 +30,32 @@ public class OrderService {
     }
 
     public void addProductToOrder(Order order, Product product, int quantity) {
-        OrderItem item = new OrderItem();
-        item.setProduct(product);
-        item.setQuantity(quantity);
-        item.setPrice(product.getPrice() * quantity);
-        order.getOrderItems().add(item);
-        order.setTotal_price(order.getTotal_price() + item.getPrice());
+        // Проверяем, есть ли уже этот продукт в заказе
+        Optional<OrderItem> existingItem = order.getOrderItems().stream()
+                .filter(item -> item.getProduct().getId() == product.getId())
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            // Если товар уже есть, увеличиваем количество и обновляем цену
+            OrderItem item = existingItem.get();
+            item.setQuantity(item.getQuantity() + quantity);
+            item.setPrice(item.getPrice() + product.getPrice() * quantity);
+        } else {
+            // Если товара нет, создаём новый элемент заказа
+            OrderItem newItem = new OrderItem();
+            newItem.setProduct(product);
+            newItem.setQuantity(quantity);
+            newItem.setPrice(product.getPrice() * quantity);
+            order.getOrderItems().add(newItem);
+        }
+
+        // Пересчитываем общую стоимость заказа
+        double totalPrice = order.getOrderItems().stream()
+                .mapToDouble(OrderItem::getPrice)
+                .sum();
+        order.setTotal_price(totalPrice);
     }
+
 
     @Transactional
     public void processOrder(Order order) {
@@ -37,23 +63,28 @@ public class OrderService {
             throw new IllegalStateException("Корзина пуста. Добавьте товары в заказ.");
         }
 
-        order.setDate(new Date());
+        order.setDate(new Date()); // Устанавливаем дату
+        order.setTime(LocalTime.now().withSecond(0).withNano(0)); // Устанавливаем текущее время
 
-        String sql = "INSERT INTO orders (user_id, order_date, status, total_price) VALUES (?, ?, ?, ?) RETURNING id";
+        // Сохраняем заказ и получаем его ID
+        String sql = "INSERT INTO orders (user_id, order_date, time, status, total_price) VALUES (?, ?, ?, ?, ?) RETURNING id";
 
         int orderId = jdbcTemplate.queryForObject(sql, new Object[]{
                 order.getUser().getId(),
-                order.getDate(), // Сохраняем дату
+                order.getDate(), // Дата
+                order.getTime(), // Время
                 order.getStatus(),
                 order.getTotal_price(),
         }, Integer.class);
 
         order.setId(orderId);
 
+        // Сохраняем товары из заказа
         for (OrderItem item : order.getOrderItems()) {
             String itemSql = "INSERT INTO order_item (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)";
             jdbcTemplate.update(itemSql, orderId, item.getProduct().getId(), item.getQuantity(), item.getPrice());
 
+            // Проверка наличия товара на складе
             String stockCheckSql = "SELECT stock FROM product WHERE id = ?";
             Integer currentStock = jdbcTemplate.queryForObject(stockCheckSql, new Object[]{item.getProduct().getId()}, Integer.class);
 
@@ -61,6 +92,7 @@ public class OrderService {
                 throw new IllegalStateException("Недостаточное количество товара на складе: " + item.getProduct().getName());
             }
 
+            // Обновление количества товара на складе
             String updateStockSql = "UPDATE product SET stock = stock - ? WHERE id = ?";
             jdbcTemplate.update(updateStockSql, item.getQuantity(), item.getProduct().getId());
         }
@@ -74,6 +106,34 @@ public class OrderService {
     public List<Order> getAllOrders() {
         String sql = "SELECT * FROM orders WHERE deleted = false";
         return jdbcTemplate.query(sql, orderRowMapper());
+    }
+    public List<OrderDTO> getAll() {
+        String sql = "SELECT o.id AS order_id, o.order_date, o.time, o.total_price, o.status, u.username, " +
+                "p.id AS product_id, p.name, p.price " +
+                "FROM orders o " +
+                "JOIN person u ON o.user_id = u.id " +
+                "JOIN order_item op ON o.id = op.order_id " +
+                "JOIN product p ON op.product_id = p.id " +
+                "WHERE o.deleted = false";
+
+        return jdbcTemplate.query(sql, new OrderRowMapper());
+    }
+
+
+    private RowMapper<Order> orderRowMapperForAll() {
+        return (rs, rowNum) -> {
+            Order order = new Order();
+            order.setId(rs.getInt("id"));
+            order.setTotal_price(rs.getDouble("total_price"));
+            order.setStatus(rs.getString("status"));
+            order.setDate(rs.getDate("order_date"));
+            order.setTime(rs.getTime("time").toLocalTime());
+            Person person = new Person();
+            person.setId(rs.getInt("user_id"));
+            person.setUsername(rs.getString("user_name"));
+            order.setUser(person);
+            return order;
+        };
     }
 
     public void deleteOrderById(int id) {
@@ -115,12 +175,11 @@ public class OrderService {
             order.setId(rs.getInt("id"));
             order.setTotal_price(rs.getDouble("total_price"));
             order.setStatus(rs.getString("status"));
-            order.setDate(rs.getDate("order_date"));  // замените на "order_date"
+            order.setDate(rs.getDate("order_date"));
+            order.setTime(rs.getTime("time").toLocalTime());
             return order;
         };
     }
-
-
 
 
 }

@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
+import ega.spring.fitnessClubJdbc.dto.PopularTime;
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.SpaBooking;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,7 @@ public class SpaBookingRepository {
             spaBooking.setUser(new Person());
             spaBooking.getUser().setId(rs.getInt("user_id"));
             spaBooking.setDate(rs.getTimestamp("date"));
+            spaBooking.setStatus(rs.getString("status"));
             spaBooking.setTime(rs.getTime("time").toLocalTime());
             return spaBooking;
         };
@@ -67,5 +69,10 @@ public class SpaBookingRepository {
     public SpaBooking getBookingById(int bookingId) {
         String sql = "SELECT * FROM spa_booking WHERE id = ? and deleted=false";
         return jdbcTemplate.queryForObject(sql, spaBookingRowMapper(), bookingId);
+    }
+
+    public List<PopularTime> getPopularTimes() {
+        String sql = "SELECT time, COUNT(*) AS count FROM workout_booking GROUP BY time ORDER BY count DESC LIMIT 3";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PopularTime(rs.getString("time"), rs.getInt("count")));
     }
 }

@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
+import ega.spring.fitnessClubJdbc.dto.PopularTrainer;
 import ega.spring.fitnessClubJdbc.models.Trainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -21,6 +22,17 @@ public class TrainerRepository {
         String sql = "SELECT * FROM trainers WHERE deleted = false";
         return jdbcTemplate.query(sql, trainerRowMapper());
     }
+
+    public List<PopularTrainer> getPopularTrainers() {
+        String sql = "SELECT t.name AS name, COUNT(*) AS count " +
+                "FROM workout_booking wb " +
+                "JOIN trainers t ON wb.trainer_id = t.id " +
+                "GROUP BY t.name " +
+                "ORDER BY count DESC LIMIT 3";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PopularTrainer(rs.getString("name"), rs.getInt("count")));
+    }
+
 
     public Trainer findById(int id) {
         String sql = "SELECT * FROM trainers WHERE id = ?";

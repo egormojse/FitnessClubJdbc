@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.repositories;
 
+import ega.spring.fitnessClubJdbc.dto.PopularTime;
 import ega.spring.fitnessClubJdbc.models.GymBooking;
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.Trainer;
@@ -43,6 +44,11 @@ public class WorkoutBookingRepository {
     public List<GymBooking> findAllByDeletedFalse() {
         String sql = "SELECT * FROM workout_booking WHERE deleted = false";
         return jdbcTemplate.query(sql, gymBookingRowMapper());
+    }
+
+    public List<PopularTime> getPopularTimes() {
+        String sql = "SELECT time, COUNT(*) AS count FROM workout_booking GROUP BY time ORDER BY count DESC LIMIT 3";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PopularTime(rs.getString("time"), rs.getInt("count")));
     }
 
     private RowMapper<GymBooking> gymBookingRowMapper() {

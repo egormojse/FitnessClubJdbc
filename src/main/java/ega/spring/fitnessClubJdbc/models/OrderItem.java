@@ -5,9 +5,10 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
+
 @Getter
 @Setter
-public class OrderItem  {
+public class OrderItem  implements Serializable {
 
     private int id;
 

@@ -1,5 +1,6 @@
 package ega.spring.fitnessClubJdbc.services;
 
+import ega.spring.fitnessClubJdbc.models.GymBooking;
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.SpaBooking;
 import ega.spring.fitnessClubJdbc.repositories.SpaBookingRepository;
@@ -94,4 +95,15 @@ public class SpaBookingService {
         spaBookingRepository.save(spaBooking);
     }
 
+    public List<SpaBooking> getBookingsForPeriod(String startDate, String endDate) {
+        String sql = "SELECT * FROM spa_booking WHERE date BETWEEN ? AND ?";
+        return jdbcTemplate.query(sql, new Object[]{startDate, endDate}, (rs, rowNum) -> {
+            SpaBooking booking = new SpaBooking();
+            booking.setId(rs.getInt("id"));
+            booking.setDate(rs.getDate("date"));
+            booking.setTime(rs.getTime("time").toLocalTime());
+            booking.setStatus(rs.getString("status"));
+            return booking;
+        });
+    }
 }

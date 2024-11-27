@@ -74,7 +74,7 @@ public class CartController {
 
         orderService.addProductToOrder(order, product, quantity);
         session.setAttribute("order", order);
-        return "redirect:/shop/cart";
+        return "redirect:/shop";
     }
 
     @PostMapping("/cart/remove")
