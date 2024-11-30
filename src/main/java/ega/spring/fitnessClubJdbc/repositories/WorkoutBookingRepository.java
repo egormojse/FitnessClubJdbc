@@ -21,15 +21,6 @@ public class WorkoutBookingRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<GymBooking> findByTrainerIdAndDate(int trainerId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
-        String sql = "SELECT * FROM workout_booking WHERE trainer_id = ? AND date BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, new Object[]{trainerId, startOfDay, endOfDay}, gymBookingRowMapper());
-    }
-
-    public List<GymBooking> findByTrainerIdAndDate(int trainerId, LocalDateTime date) {
-        String sql = "SELECT * FROM workout_booking WHERE trainer_id = ? AND date = ?";
-        return jdbcTemplate.query(sql, new Object[]{trainerId, date}, gymBookingRowMapper());
-    }
 
     public List<GymBooking> findByUserId(int userId) {
         String sql = "SELECT * FROM workout_booking WHERE user_id = ?";
@@ -39,11 +30,6 @@ public class WorkoutBookingRepository {
     public GymBooking findById(int id) {
         String sql = "SELECT * FROM workout_booking WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id}, gymBookingRowMapper());
-    }
-
-    public List<GymBooking> findAllByDeletedFalse() {
-        String sql = "SELECT * FROM workout_booking WHERE deleted = false";
-        return jdbcTemplate.query(sql, gymBookingRowMapper());
     }
 
     public List<PopularTime> getPopularTimes() {

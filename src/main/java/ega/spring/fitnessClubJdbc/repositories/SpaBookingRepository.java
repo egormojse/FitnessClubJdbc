@@ -46,25 +46,39 @@ public class SpaBookingRepository {
                 spaBooking.getStatus()
         );
     }
-
     private RowMapper<SpaBooking> spaBookingRowMapper() {
         return (rs, rowNum) -> {
             SpaBooking spaBooking = new SpaBooking();
+
+            // Основные данные о бронировании
             spaBooking.setId(rs.getInt("id"));
-            spaBooking.setEmployeeId(rs.getInt("employee_id"));
+            spaBooking.setEmployeeId(rs.getInt("employee_id"));  // ID сотрудника
             spaBooking.setUser(new Person());
-            spaBooking.getUser().setId(rs.getInt("user_id"));
+            spaBooking.getUser().setId(rs.getInt("user_id"));  // ID пользователя
             spaBooking.setDate(rs.getTimestamp("date"));
             spaBooking.setStatus(rs.getString("status"));
             spaBooking.setTime(rs.getTime("time").toLocalTime());
+            // Получаем имя пользователя
+            spaBooking.getUser().setUsername(rs.getString("user_username"));
+            // Получаем имя сотрудника
+            spaBooking.setEmployeeName(rs.getString("employee_name"));
+
             return spaBooking;
         };
     }
 
     public List<SpaBooking> findAll() {
-        String sql = "SELECT * FROM spa_booking Where deleted=false";
+        String sql = "SELECT sb.id, sb.user_id, sb.employee_id, sb.date, sb.time, sb.status, " +
+                "p.username AS user_username, " +
+                "s.name AS employee_name " +
+                "FROM spa_booking sb " +
+                "JOIN person p ON sb.user_id = p.id " +  // Подключаем пользователя
+                "JOIN spa_employees s ON sb.employee_id = s.id " +  // Подключаем сотрудника
+                "WHERE sb.deleted = false";
+
         return jdbcTemplate.query(sql, spaBookingRowMapper());
     }
+
 
     public SpaBooking getBookingById(int bookingId) {
         String sql = "SELECT * FROM spa_booking WHERE id = ? and deleted=false";

@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:17.2
+    restart: "no"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 111
+      POSTGRES_DB: Gym_db
+    healthcheck:
+      test: pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+  redis:
+    image: redis:7.4.1
+    restart: "no"
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: redis-cli ping
+      interval: 10s
+      timeout: 5s
+      start_period: 10s
+      retries: 5
+  fitness-club-jdbc:
+    image: fitness-club-jdbc:latest
+    build:
+      context: .
+      args:
+        DOCKER_BUILDKIT: 1
+    restart: "no"
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_DB_NAME: Gym_db
+      POSTGRES_PASSWORD: 111
+      POSTGRES_USERNAME: postgres
+      POSTGRES_HOST: postgres
+      DATA_REDIS_PORT: 6379
+      DATA_REDIS_HOST: redis
+    depends_on:
+      - postgres
+      - redis
+volumes:
+  postgres_data:

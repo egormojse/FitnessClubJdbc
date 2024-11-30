@@ -25,6 +25,14 @@ public class GymBooking  {
 
     private LocalTime time;
 
+    public String getTrainerUsername() {
+        return trainer != null ? trainer.getUsername() : "";
+    }
+
+    public String getUserUsername() {
+        return user != null ? user.getUsername() : "";
+    }
+
 
     public GymBooking() {}
 }

@@ -1,40 +1,57 @@
 <!DOCTYPE html>
-<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Админ Панель</title>
-    <link rel="stylesheet" href="/css/style.css">
-    <script defer src="/js/script.js"></script>
-
+    <link rel="stylesheet" href="/css/admin.css">
+    <script defer src="/js/admin.js"></script>
 </head>
 <body>
 <div class="background-image"></div>
-<div class="container">
-    <nav class="tabs">
-        <div class="tab-button-wrapper">
-            <div class="tab-button active" data-target="userPanel">Пользователи</div>
-            <div class="tab-button" data-target="trainerPanel">Тренера</div>
-            <div class="tab-button" data-target="bookingPanel">Бронирования тренировок</div>
-            <div class="tab-button" data-target="bookingSpaPanel">Бронирования спа</div>
-            <div class="tab-button" data-target="orderPanel">Заказы</div>
-            <div class="tab-button" data-target="spaEmployeePanel">Сотрудники СПА</div>
-        </div>
-    </nav>
 
-    <div class="tab-content-wrapper">
-        <!-- User Panel -->
-        <div class="tab-content active" id="userPanel">
+<div class="admin-panel">
+
+    <!-- Боковая панель (вкладки) -->
+    <aside class="sidebar">
+        <ul>
+            <li data-tab="users" class="active">
+                <span class="icon">👤</span> Все пользователи
+            </li>
+            <li data-tab="trainers">
+                <span class="icon">🏋️</span> Все тренеры
+            </li>
+            <li data-tab="spa-staff">
+                <span class="icon">💆</span> Сотрудники SPA
+            </li>
+            <li data-tab="orders">
+                <span class="icon">🛒</span> Все заказы
+            </li>
+            <li data-tab="training-bookings">
+                <span class="icon">📅</span> Записи на тренировки
+            </li>
+            <li data-tab="spa-bookings">
+                <span class="icon">📅</span> Записи на спа
+            </li>
+            <li data-tab="analysis">
+                <span class="icon">📊</span> Анализ
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Основной контент -->
+    <main class="content">
+        <!-- Вкладка с пользователями -->
+        <section id="users" class="tab-content active">
             <h2>Пользователи</h2>
-            <div th:each="user : ${users}" class="card">
-                <p th:text="${user.getFirst_name()}">Имя пользователя</p>
-            </div>
+
             <div class="actions">
+                <button onclick="clearCache()">Очистить кэш Redis</button>
                 <button onclick="toggleForm('edit', 'user')">Редактировать</button>
                 <button onclick="toggleForm('delete', 'user')">Удалить</button>
             </div>
 
+            <!-- Форма редактирования пользователя -->
             <form class="edit-form" id="editUserForm" th:action="@{/user/edit}" method="post">
                 <label for="userSelect">Выберите пользователя:</label>
                 <select name="userId" id="userSelect" required>
@@ -55,19 +72,26 @@
                 <p>Вы уверены, что хотите удалить пользователя?</p>
                 <button type="submit">Удалить</button>
             </form>
-        </div>
 
-        <!-- Trainer Panel -->
-        <div class="tab-content" id="trainerPanel">
-            <h2>Тренера</h2>
-            <div th:each="trainer : ${trainers}" class="card">
-                <p th:text="${trainer.getName()}">Имя тренера</p>
+            <div class="search-container">
+                <input type="text" id="userSearch" placeholder="Поиск пользователей..." onkeyup="searchUsers()">
             </div>
+
+            <!-- Список пользователей -->
+            <div th:each="user : ${users}" class="user-card">
+                <p th:text="${user.getFirst_name()}">Имя пользователя</p>
+            </div>
+        </section>
+
+        <!-- Вкладка с тренерами -->
+        <section id="trainers" class="tab-content">
+            <h2>Тренеры</h2>
             <div class="actions">
                 <button onclick="toggleForm('edit', 'trainer')">Редактировать</button>
                 <button onclick="toggleForm('delete', 'trainer')">Удалить</button>
             </div>
 
+            <!-- Форма редактирования тренера -->
             <form class="edit-form" id="editTrainerForm" th:action="@{/trainer/edit}" method="post">
                 <label for="trainerSelect">Выберите тренера:</label>
                 <select name="trainerId" id="trainerSelect" required>
@@ -78,7 +102,7 @@
                 <button type="submit">Сохранить</button>
             </form>
 
-
+            <!-- Форма удаления тренера -->
             <form class="delete-form" id="deleteTrainerForm" th:action="@{/trainer/delete}" method="post">
                 <label for="trainerDeleteSelect">Выберите тренера для удаления:</label>
                 <select name="trainerId" id="trainerDeleteSelect" required>
@@ -88,178 +112,303 @@
                 <p>Вы уверены, что хотите удалить тренера?</p>
                 <button type="submit">Удалить</button>
             </form>
-        </div>
 
-        <!-- Booking Panel -->
-        <div class="tab-content" id="bookingPanel">
-            <h2>Бронирования</h2>
-            <div th:each="booking : ${bookings}" class="card">
-                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
-                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
-                <p th:text="${booking.getStatus()}">Статус</p>
+            <!-- Список тренеров -->
+            <div th:each="trainer : ${trainers}" class="card">
+                <p th:text="${trainer.getName()}">Имя тренера</p>
             </div>
-            <div class="actions">
-                <button onclick="toggleForm('edit', 'booking')">Редактировать</button>
-                <button onclick="toggleForm('delete', 'booking')">Удалить</button>
-            </div>
+        </section>
 
-            <form class="edit-form" id="editBookingForm" th:action="@{/booking/edit}" method="post">
-                <label for="bookingSelect">Выберите бронирование:</label>
-                <select name="bookingId" id="bookingSelect" required>
-                    <option value="">Выберите бронирование</option>
-                    <option th:each="booking : ${bookings}"
-                            th:value="${booking.getId()}"
-                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
-
-                </select>
-                <label>Статус:
-                    <input type="text" name="details" required placeholder="Введите новый статус">
-                </label>
-                <button type="submit">Сохранить</button>
-            </form>
-
-
-            <form class="delete-form" id="deleteSpaBookingForm" th:action="@{/booking/delete}" method="post">
-                <label for="bookingDeleteSelect">Выберите бронирование для удаления:</label>
-                <select name="bookingId" id="spaBookingDeleteSelect" required>
-                    <option value="">Выберите бронирование</option>
-                    <option th:each="booking : ${bookings}"
-                            th:value="${booking.getId()}"
-                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
-
-                </select>
-                <p>Вы уверены, что хотите удалить бронирование?</p>
-                <button type="submit">Удалить</button>
-            </form>
-        </div>
-
-        <!-- Booking Panel -->
-        <div class="tab-content" id="bookingSpaPanel">
-            <h2>Бронирования</h2>
-            <div th:each="booking : ${spaBookings}" class="card">
-                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
-                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
-                <p th:text="${booking.getStatus()}">Статус</p>
-            </div>
-            <div class="actions">
-                <button onclick="toggleForm('edit', 'booking')">Редактировать</button>
-                <button onclick="toggleForm('delete', 'booking')">Удалить</button>
-            </div>
-
-            <form class="edit-form" id="editSpaBookingForm" th:action="@{/booking/edit}" method="post">
-                <label for="bookingSelect">Выберите бронирование:</label>
-                <select name="bookingId" id="spaBookingSelect" required>
-                    <option value="">Выберите бронирование</option>
-                    <option th:each="booking : ${bookings}"
-                            th:value="${booking.getId()}"
-                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
-
-                </select>
-                <label>Статус:
-                    <input type="text" name="details" required placeholder="Введите новый статус">
-                </label>
-                <button type="submit">Сохранить</button>
-            </form>
-
-
-            <form class="delete-form" id="deleteBookingForm" th:action="@{/booking/delete}" method="post">
-                <label for="bookingDeleteSelect">Выберите бронирование для удаления:</label>
-                <select name="bookingId" id="bookingDeleteSelect" required>
-                    <option value="">Выберите бронирование</option>
-                    <option th:each="booking : ${bookings}"
-                            th:value="${booking.getId()}"
-                            th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} + ' ' + ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
-
-                </select>
-                <p>Вы уверены, что хотите удалить бронирование?</p>
-                <button type="submit">Удалить</button>
-            </form>
-        </div>
-
-        <!-- Order Panel -->
-        <div class="tab-content" id="orderPanel">
-            <h2>Заказы</h2>
-            <div th:each="order : ${orders}" class="card">
-                <p th:text="${order.getId()}"></p>
-                <p th:text="${order.getStatus()}">Статус</p>
-            </div>
-            <div class="actions">
-                <button onclick="toggleForm('edit', 'order')">Редактировать</button>
-                <button onclick="toggleForm('delete', 'order')">Удалить</button>
-            </div>
-
-            <form class="edit-form" id="editOrderForm" th:action="@{/order/edit}" method="post">
-                <label for="orderSelect">Выберите заказ:</label>
-                <select name="orderId" id="orderSelect" required>
-                    <option value="">Выберите заказ</option>
-                    <option th:each="order : ${orders}" th:value="${order.getId()}" th:text="${order.getStatus()}"></option>
-                </select>
-                <label>Новые детали заказа: <input type="text" name="newDetails" required></label>
-                <button type="submit">Сохранить</button>
-            </form>
-
-
-            <form class="delete-form" id="deleteOrderForm" th:action="@{/order/delete}" method="post">
-                <label for="orderDeleteSelect">Выберите заказ для удаления:</label>
-                <select name="orderId" id="orderDeleteSelect" required>
-                    <option value="">Выберите заказ</option>
-                    <option th:each="order : ${orders}" th:value="${order.getId()}" th:text="${order.getStatus()}"></option>
-                </select>
-                <p>Вы уверены, что хотите удалить заказ?</p>
-                <button type="submit">Удалить</button>
-            </form>
-        </div>
-
-        <!-- Spa Employee Panel -->
-        <div class="tab-content" id="spaEmployeePanel">
-            <h2>Сотрудники СПА</h2>
-            <div th:each="spaEmployee : ${spaEmployees}" class="card">
-                <p th:text="${spaEmployee.getName()}">Имя сотрудника СПА</p>
-            </div>
+        <section id="spa-staff" class="tab-content">
+            <h2>Сотрудники SPA</h2>
             <div class="actions">
                 <button onclick="toggleForm('edit', 'spaEmployee')">Редактировать</button>
                 <button onclick="toggleForm('delete', 'spaEmployee')">Удалить</button>
             </div>
-
             <form class="edit-form" id="editSpaEmployeeForm" th:action="@{/spaEmployee/edit}" method="post">
-                <label for="spaEmployeeSelect">Выберите сотрудника СПА:</label>
+                <label for="spaEmployeeSelect">Выберите сотрудника SPA:</label>
                 <select name="spaEmployeeId" id="spaEmployeeSelect" required>
-                    <option th:each="spaEmployee : ${spaEmployees}" th:value="${spaEmployee.getId()}" th:text="${spaEmployee.getName()}"></option>
+                    <option value="">Выберите сотрудника</option>
+                    <option th:each="employee : ${spaEmployees}" th:value="${employee.getId()}" th:text="${employee.getName()}"></option>
                 </select>
                 <label>Новое имя: <input type="text" name="name" required></label>
                 <button type="submit">Сохранить</button>
             </form>
-
-
-            <form class="delete-form" id="deleteSpaEmployeeForm" th:action="@{/spa/employee/delete}" method="post">
-                <label for="spaEmployeeDeleteSelect">Выберите сотрудника СПА для удаления:</label>
+            <form class="delete-form" id="deleteSpaEmployeeForm" th:action="@{/spaEmployee/delete}" method="post">
+                <label for="spaEmployeeDeleteSelect">Выберите сотрудника для удаления:</label>
                 <select name="spaEmployeeId" id="spaEmployeeDeleteSelect" required>
-                    <option value="">Выберите сотрудника СПА</option>
-                    <option th:each="spaEmployee : ${spaEmployees}" th:value="${spaEmployee.getId()}" th:text="${spaEmployee.getName()}"></option>
+                    <option value="">Выберите сотрудника</option>
+                    <option th:each="employee : ${spaEmployees}" th:value="${employee.getId()}" th:text="${employee.getName()}"></option>
                 </select>
-                <p>Вы уверены, что хотите удалить сотрудника СПА?</p>
+                <p>Вы уверены, что хотите удалить сотрудника?</p>
                 <button type="submit">Удалить</button>
             </form>
-        </div>
-    </div>
+            <div th:each="employee : ${spaEmployees}" class="card">
+                <p th:text="${employee.getName()}">Имя сотрудника</p>
+            </div>
+        </section>
+
+        <!-- Вкладка с записями на тренировки -->
+        <section id="training-bookings" class="tab-content">
+            <h2>Записи на тренировки</h2>
+            <div class="actions">
+                <button onclick="toggleForm('edit', 'trainingBooking')">Редактировать</button>
+                <button onclick="toggleForm('delete', 'trainingBooking')">Удалить</button>
+            </div>
+            <form class="edit-form" id="editTrainingBookingForm" th:action="@{/trainingBooking/edit}" method="post">
+                <label for="trainingBookingSelect">Выберите запись:</label>
+                <select name="bookingId" id="trainingBookingSelect" required>
+                    <option value="">Выберите запись</option>
+                    <option th:each="booking : ${bookings}" th:value="${booking.getId()}" th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} +' '+  ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+                </select>
+                <label>Новый статус: <input type="text" name="status" required></label>
+                <button type="submit">Сохранить</button>
+            </form>
+            <form class="delete-form" id="deleteTrainingBookingForm" th:action="@{/trainingBooking/delete}" method="post">
+                <label for="trainingBookingDeleteSelect">Выберите запись для удаления:</label>
+                <select name="bookingId" id="trainingBookingDeleteSelect" required>
+                    <option value="">Выберите запись</option>
+                    <option th:each="booking : ${bookings}" th:value="${booking.getId()}" th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}+' '+ ${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+                </select>
+                <p>Вы уверены, что хотите удалить запись?</p>
+                <button type="submit">Удалить</button>
+            </form>
+
+            <div class="search-container">
+                <input type="text" id="trainingSearch" placeholder="Поиск тренировок..." onkeyup="searchTrainings()">
+                <select id="searchCategory">
+                    <option value="time">По времени</option>
+                    <option value="date">По дате</option>
+                    <option value="status">По Статусу</option>
+                    <option value="user_employee">По пользователю и сотруднику</option>
+                </select>
+            </div>
+
+
+            <div th:each="booking : ${bookings}" class="training-card">
+                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
+                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
+                <p th:text="${booking.getStatus()}">Статус</p>
+                <p th:text="'Пользователь: ' + ${booking.getUserUsername()} + ', Тренер: ' + ${booking.getTrainerUsername()}"></p>
+            </div>
+        </section>
+
+        <!-- Вкладка с записями на SPA -->
+        <section id="spa-bookings" class="tab-content">
+            <h2>Записи на SPA</h2>
+            <div class="actions">
+                <button onclick="toggleForm('edit', 'spaBooking')">Редактировать</button>
+                <button onclick="toggleForm('delete', 'spaBooking')">Удалить</button>
+            </div>
+            <form class="edit-form" id="editSpaBookingForm" th:action="@{/spaBooking/edit}" method="post">
+                <label for="spaBookingSelect">Выберите запись:</label>
+                <select name="bookingId" id="spaBookingSelect" required>
+                    <option value="">Выберите запись</option>
+                    <option th:each="booking : ${spaBookings}" th:value="${booking.getId()}" th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} +' '+${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+                </select>
+                <label>Новый статус: <input type="text" name="status" required></label>
+                <button type="submit">Сохранить</button>
+            </form>
+            <form class="delete-form" id="deleteSpaBookingForm" th:action="@{/spaBooking/delete}" method="post">
+                <label for="spaBookingDeleteSelect">Выберите запись для удаления:</label>
+                <select name="bookingId" id="spaBookingDeleteSelect" required>
+                    <option value="">Выберите запись</option>
+                    <option th:each="booking : ${spaBookings}" th:value="${booking.getId()}" th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')} +' '+${#temporals.format(booking.getTime(), 'HH:mm')}"></option>
+                </select>
+                <p>Вы уверены, что хотите удалить запись?</p>
+                <button type="submit">Удалить</button>
+            </form>
+
+            <div class="search-container">
+                <input type="text" id="spaSearch" placeholder="Поиск тренировок..." onkeyup="searchSpa()">
+                <select id="searchSpaCategory">
+                    <option value="time">По времени</option>
+                    <option value="date">По дате</option>
+                    <option value="status">По Статусу</option>
+                    <option value="user_employee">По пользователю и сотруднику</option>
+                </select>
+            </div>
+
+
+            <div th:each="booking : ${spaBookings}" class="spa-card">
+                <p th:text="${#dates.format(booking.getDate(), 'yyyy-MM-dd')}"></p>
+                <p th:text="${#temporals.format(booking.getTime(), 'HH:mm')}"></p>
+                <p th:text="${booking.getStatus()}">Статус</p>
+                <p th:text="'Пользователь: ' + ${booking.getUser.getUsername()} + ', Сотрудник: ' + ${booking.getEmployeeName()}"></p>
+
+            </div>
+        </section>
+
+        <!-- Вкладка с заказами -->
+        <section id="orders" class="tab-content">
+            <h2>Заказы</h2>
+            <div class="actions">
+                <button onclick="toggleForm('edit', 'order')">Редактировать</button>
+                <button onclick="toggleForm('delete', 'order')">Удалить</button>
+            </div>
+            <form class="edit-form" id="editOrderForm" th:action="@{/order/edit}" method="post">
+                <label for="orderSelect">Выберите заказ:</label>
+                <select name="orderId" id="orderSelect" required>
+                    <option value="">Выберите заказ</option>
+                    <option th:each="order : ${orders}" th:value="${order.getOrderId()}" th:text="${order.getOrderId()} +' '+${order.getStatus()}"></option>
+                </select>
+                <label>Новые детали заказа: <input type="text" name="newDetails" required></label>
+                <button type="submit">Сохранить</button>
+            </form>
+            <form class="delete-form" id="deleteOrderForm" th:action="@{/order/delete}" method="post">
+                <label for="orderDeleteSelect">Выберите заказ для удаления:</label>
+                <select name="orderId" id="orderDeleteSelect" required>
+                    <option value="">Выберите заказ</option>
+                    <option th:each="order : ${orders}" th:value="${order.getOrderId()}" th:text="${order.getOrderId()} +' '+ ${order.getStatus()}"></option>
+                </select>
+                <p>Вы уверены, что хотите удалить заказ?</p>
+                <button type="submit">Удалить</button>
+            </form>
+
+            <div class="search-container">
+                <input type="text" id="orderSearch" placeholder="Поиск заказов по ID..." onkeyup="searchOrders()">
+            </div>
+            <div th:each="order : ${orders}" class="order-card">
+                <p th:text="${order.getOrderId() + ' ' + order.getStatus() + ' ' + order.getUserName()  + ' ' + order.getTotalPrice()}">Статус</p>
+                <div th:each="product:${order.getProducts()}">
+                    <p th:text ="${product.getName()}"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка с анализом -->
+        <section id="analysis" class="tab-content">
+            <h2>Анализ</h2>
+            <!-- Форма экспорта данных -->
+            <form id="export-form" class="export-form" action="/analysis/export" method="get">
+                <div>
+                    <label for="data-type">Тип данных для экспорта:</label>
+                    <select id="data-type" name="exportType" required>
+                        <option value="" disabled selected>Выберите тип данных</option>
+                        <option value="users-export">Пользователи</option>
+                        <option value="orders-export">Заказы</option>
+                        <option value="bookings-export">Бронирования</option>
+                        <option value="spa-bookings-export">SPA бронирования</option>
+                    </select>
+                </div>
+                <button type="submit">Экспортировать данные</button>
+            </form>
+
+            <!-- Популярные элементы -->
+            <div class="popular-section">
+                <h3>Популярные элементы</h3>
+                <div class="popular-grid">
+                    <!-- Популярное время -->
+                    <div class="card">
+                        <h3>Популярные времена</h3>
+                        <ul>
+                            <th:block th:each="time : ${popularTimes}">
+                                <li th:text="${time.time} + ' — ' + ${time.count}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+
+                    <!-- Популярные тренеры -->
+                    <div class="card">
+                        <h3>Популярные тренеры</h3>
+                        <ul>
+                            <th:block th:each="trainer : ${popularTrainers}">
+                                <li th:text="${trainer.trainerName} + ' — ' + ${trainer.count}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+
+                    <!-- Популярные сотрудники SPA -->
+                    <div class="card">
+                        <h3>Популярные сотрудники SPA</h3>
+                        <ul>
+                            <th:block th:each="spaEmployee : ${popularSpaEmployees}">
+                                <li th:text="${spaEmployee.name} + ' — ' + ${spaEmployee.count}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+
+                    <!-- Популярные продукты -->
+                    <div class="card">
+                        <h3>Популярные продукты</h3>
+                        <ul>
+                            <th:block th:each="product : ${popularProducts}">
+                                <li th:text="${product.productName} + ' — ' + ${product.count}"></li>
+                            </th:block>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+    </main>
 </div>
-
 <script>
-    function toggleForm(action, type) {
-        const editForm = document.getElementById(`edit${capitalize(type)}Form`);
-        const deleteForm = document.getElementById(`delete${capitalize(type)}Form`);
-        if (action === 'edit') {
-            editForm.style.display = editForm.style.display === 'block' ? 'none' : 'block';
-            deleteForm.style.display = 'none';
-        } else if (action === 'delete') {
-            deleteForm.style.display = deleteForm.style.display === 'block' ? 'none' : 'block';
-            editForm.style.display = 'none';
-        }
-    }
+    document.addEventListener("DOMContentLoaded", function () {
+        // Переключение вкладок
+        const tabs = document.querySelectorAll('.sidebar li');
+        const tabContents = document.querySelectorAll('.tab-content');
 
-    function capitalize(str) {
-        return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                // Удаляем активные классы
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Устанавливаем активный класс
+                tab.classList.add('active');
+                const targetTab = document.getElementById(tab.getAttribute('data-tab'));
+                if (targetTab) targetTab.classList.add('active');
+            });
+        });
+
+        // Инициализация первой вкладки
+        const initialTab = document.querySelector('.sidebar li.active');
+        if (initialTab) initialTab.click();
+
+        // Обработка формы экспорта
+        const exportForm = document.getElementById("export-form");
+        if (exportForm) {
+            exportForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+
+                // Получаем выбранный тип данных
+                const dataType = document.getElementById("data-type").value;
+
+                if (!dataType) {
+                    alert("Пожалуйста, выберите тип данных для экспорта.");
+                    return;
+                }
+
+                // Формируем URL для экспорта
+                const exportUrl = `/analysis/export?exportTypes=${dataType}`;
+
+                // Выполняем запрос на сервер
+                fetch(exportUrl, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Ошибка сервера: " + response.statusText);
+                        }
+                        return response.blob();
+                    })
+                    .then(blob => {
+                        // Создаем ссылку для скачивания файла
+                        const url = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = `${dataType}-export.xlsx`; // Имя файла
+                        link.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+                    .catch(error => {
+                        console.error('Ошибка:', error);
+                        alert('Ошибка при экспорте данных: ' + error.message);
+                    });
+            });
+        }
+    });
 </script>
 
 </body>

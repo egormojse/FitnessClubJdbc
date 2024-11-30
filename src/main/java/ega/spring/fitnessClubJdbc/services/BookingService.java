@@ -1,6 +1,5 @@
 package ega.spring.fitnessClubJdbc.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import ega.spring.fitnessClubJdbc.models.GymBooking;
 import ega.spring.fitnessClubJdbc.models.Person;
 import ega.spring.fitnessClubJdbc.models.Trainer;
@@ -11,14 +10,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,13 +86,21 @@ public class BookingService {
 
     public List<GymBooking> getAllBookings() {
 
-        String sql = "SELECT * FROM workout_booking WHERE deleted = false";
+        String sql =  "SELECT wb.id, wb.trainer_id, wb.user_id, wb.date, wb.time, wb.status, " +
+                "p.username AS user_username, t.username AS trainer_username " +
+                "FROM workout_booking AS wb " +
+                "JOIN person p ON wb.user_id = p.id " +
+                "JOIN trainers t ON wb.trainer_id = t.id " +
+                "WHERE wb.deleted = false";
         List<GymBooking> bookings = jdbcTemplate.query(sql, (rs, rowNum) -> {
             GymBooking booking = new GymBooking();
             booking.setId(rs.getInt("id"));
-            booking.setTrainer(new Trainer());
-            booking.getTrainer().setId(rs.getInt("trainer_id"));
-            booking.setUser(new Person());
+            Trainer trainer = new Trainer();
+            trainer.setUsername(rs.getString("trainer_username"));
+            booking.setTrainer(trainer);
+            Person person = new Person();
+            person.setUsername(rs.getString("user_username"));
+            booking.setUser(person);
             booking.getUser().setId(rs.getInt("user_id"));
             booking.setDate(rs.getDate("date"));
             booking.setTime(rs.getTime("time").toLocalTime());
@@ -149,15 +154,4 @@ public class BookingService {
         });
     }
 
-    public List<GymBooking> getBookingsForPeriod(String startDate, String endDate) {
-        String sql = "SELECT * FROM workout_booking WHERE date BETWEEN ? AND ?";
-        return jdbcTemplate.query(sql, new Object[]{startDate, endDate}, (rs, rowNum) -> {
-            GymBooking booking = new GymBooking();
-            booking.setId(rs.getInt("id"));
-            booking.setDate(rs.getDate("date"));
-            booking.setTime(rs.getTime("time").toLocalTime());
-            booking.setStatus(rs.getString("status"));
-            return booking;
-        });
-    }
 }

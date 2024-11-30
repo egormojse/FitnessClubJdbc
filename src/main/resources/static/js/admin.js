@@ -74,20 +74,41 @@ function searchOrders() {
 // Search Trainings Functionality
 function searchTrainings() {
     const input = document.getElementById('trainingSearch').value.toLowerCase();
+    const searchCategory = document.getElementById('searchCategory').value.toLowerCase();
     const trainingCards = document.querySelectorAll('.training-card');
 
     trainingCards.forEach(card => {
-        const timeText = card.querySelector('p:nth-child(2)').textContent.toLowerCase(); // Assuming time is the second <p>
-        card.style.display = timeText.includes(input) ? '' : 'none';
+        let textToSearch = '';
+        if (searchCategory === 'date') {
+            textToSearch = card.querySelector('p:nth-child(1)').textContent.toLowerCase(); // Дата
+        } else if (searchCategory === 'time') {
+            textToSearch = card.querySelector('p:nth-child(2)').textContent.toLowerCase(); // Время
+        } else if (searchCategory === 'status') {
+            textToSearch = card.querySelector('p:nth-child(3)').textContent.toLowerCase(); // Статус
+        } else if (searchCategory === 'user_employee') {
+            textToSearch = card.querySelector('p:nth-child(4)').textContent.toLowerCase(); // Пользователь и Сотрудник
+        }
+
+        card.style.display = textToSearch.includes(input) ? '' : 'none';
     });
 }
-
 function searchSpa() {
     const input = document.getElementById('spaSearch').value.toLowerCase();
-    const trainingCards = document.querySelectorAll('.spa-card');
+    const searchCategory = document.getElementById('searchSpaCategory').value.toLowerCase();
+    const spaCards = document.querySelectorAll('.spa-card');
 
-    trainingCards.forEach(card => {
-        const timeText = card.querySelector('p:nth-child(2)').textContent.toLowerCase(); // Assuming time is the second <p>
-        card.style.display = timeText.includes(input) ? '' : 'none';
+    spaCards.forEach(card => {
+        let textToSearch = '';
+        if (searchCategory === 'date') {
+            textToSearch = card.querySelector('p:nth-child(1)').textContent.toLowerCase(); // Дата
+        } else if (searchCategory === 'time') {
+            textToSearch = card.querySelector('p:nth-child(2)').textContent.toLowerCase(); // Время
+        } else if (searchCategory === 'status') {
+            textToSearch = card.querySelector('p:nth-child(3)').textContent.toLowerCase(); // Статус
+        } else if (searchCategory === 'user_employee') {
+            textToSearch = card.querySelector('p:nth-child(4)').textContent.toLowerCase(); // Пользователь и Сотрудник
+        }
+
+        card.style.display = textToSearch.includes(input) ? '' : 'none';
     });
 }

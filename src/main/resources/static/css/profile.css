@@ -139,6 +139,8 @@ th {
     transition: background-color 0.3s;
 }
 
+
+
 .profile-form button:hover {
     background-color: #ff3366; /* Brighter neon red */
 }
@@ -148,8 +150,6 @@ th {
 }
 
 .btn-danger {
-    position: absolute;
-    right: 20px;
     width: 150px; /* Одинаковая ширина для обеих кнопок */
     background-color: #ff0033; /* Неоново-красный цвет */
     color: #ffffff; /* Белый текст */
